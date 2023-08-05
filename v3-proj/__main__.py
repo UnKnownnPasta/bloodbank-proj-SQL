@@ -1,26 +1,17 @@
 from tkinter import *
 from tkinter import messagebox
 import mysql.connector as sql
-import os, ctypes
+import os
+
+# -------------------------------------- Some Ease-Of-Use functions --------------------------------------
 
 #   SQL Password
 #       Change this to your MySQL Password (host system)
 MYSQL_PASSWORD = 'root'
 current_dir = os.path.dirname(__file__)
 
-# -------------------------------------- Some Ease-Of-Use functions --------------------------------------
-
 def pathLoad(path):
     return os.path.join(current_dir, path)
-
-def installFont(file):
-    gdi32 = ctypes.WinDLL('gdi32')          
-    gdi32.AddFontResourceW.argtypes = (ctypes.c_wchar_p,)
-    gdi32.AddFontResourceW(pathLoad(file))
-
-# Install necessary fonts
-installFont(file='src/JosefinSans-Regular.ttf')
-installFont(file='src/Hello Sunday.otf')
 
 # ----------------------------------- Main Class that runs the program ------------------------------------
 
@@ -125,7 +116,6 @@ class BloodBankApp:
         UserApp(x, y)
     
     def launchAdminApp(self, x, y, z, w):
-        print(self.login_var)
         for i in self.login_var:
             i.destroy()
 
@@ -136,6 +126,5 @@ if __name__ == "__main__":
     app = BloodBankApp()
 
     # Run login page
-    # app.launchUserApp('a', 'Lions EYE')
-    app.doLogin()
+    app.authenticate()
     app.root.mainloop()

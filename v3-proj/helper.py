@@ -81,6 +81,7 @@ def AdminSubmit(postCode, contact, hospName, passwrd):
 
 # for verifying info from login screen (admin)
 def AdminAccess(un, pw):
+    un, pw = un.replace(' ', '_'), pw.replace(' ', '_')
     for i in [un, pw]:
         accessFilter = ['User Name', 'Password', ' ']
 
@@ -89,7 +90,7 @@ def AdminAccess(un, pw):
             return
 
     query = "select * from hospital where HospitalName=%s and Password=%s"
-    values = (un.replace(' ', '_'), pw.replace(' ', '_'))
+    values = (un, pw)
 
     app.cursor.execute(query, values)
     res = app.cursor.fetchone()
@@ -98,7 +99,8 @@ def AdminAccess(un, pw):
         messagebox.showerror('Error', 'Login details are not correct.')
         return
 
-    app.cursor.execute('select HospitalID, PinCode from Hospital where HospitalName=%s', (un,))
+    app.cursor.execute('select HospitalID, PinCode from Hospital where HospitalName="%s"' % ( un, ))
+    
     info_list = [un, pw] + [i for i in app.cursor.fetchall()[0]]
 
     from adminpages import AdminApp
