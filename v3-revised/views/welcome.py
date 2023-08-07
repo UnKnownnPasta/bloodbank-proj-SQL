@@ -1,0 +1,83 @@
+from utils import pathLoad, create_button, create_entry, create_images
+
+# --------------------- Define some basics for login and general program ----------------------
+
+def setText(entry, defaultText):
+    entry.delete(0, END) if entry.get().strip() == defaultText else None
+
+def restoreText(entry, defaultText):
+    entry.insert(0, defaultText) if entry.get().strip() == "" else None
+
+count = 0
+
+images = create_images()
+
+# --------------------------------- Welcome page handling -------------------------------------
+
+from tkinter import *
+from tkinter import Canvas, Button, messagebox
+
+def create_canvas(src, img):
+    canvas = Canvas(src, width=img[7].width(), height=img[7].height(), highlightthickness=0)
+    canvas.pack(side="top", fill="both", expand=True)
+    return canvas
+
+def bind_events(widget, text):
+    widget.bind('<FocusIn>', lambda event: setText(widget, text))
+    widget.bind('<FocusOut>', lambda event: restoreText(widget, text))
+
+def switch_to_entry(src, img):
+    global temporary_button
+    temporary_button.destroy()
+    submit = create_button(src, 'Login', 405, 360,
+                    command=lambda: validate(hospital_name.get(), user_name.get(), src))
+
+    hospital_name = create_entry(src, 240, 240, 'Hospital Name', width=70)
+    bind_events(hospital_name, 'Hospital Name')
+
+    user_name = create_entry(src, 240, 300, 'Your Name', width=70)
+    bind_events(user_name, 'Your Name')
+
+def display_error():
+    global count, error_text
+    count += 1
+    canvas.itemconfigure(error_text, fill='white', text=f'Invalid Login Details. [{count}]')
+
+def validate(hospname, usrname, r):
+    for value in [hospname, usrname]:
+        if len(value.strip()) == 0 or value in ['Hospital Name', 'Your Name'] or value.isdigit():
+            display_error()
+            return
+
+    a = list(r.__dict__['children'].values())
+    for widget in a:
+        widget.destroy()
+    del a
+
+    from views.user_view import user_window
+    user_window(hospname, usrname, r, images)
+
+def log_out():
+    pass
+
+def welcome_screen(src):
+    global images, canvas, temporary_button, error_text
+
+    canvas = create_canvas(src, images)
+    canvas.create_image(0, 0, image=images[7], anchor='nw')
+
+    temporary_button = Button(src, command=lambda: switch_to_entry(src, images),
+                              bd=0, activebackground='#D22B2B', bg='#EE4B2B', relief=FLAT, image=images[8])
+    temporary_button.place(x=310, y=250)
+
+    canvas.create_text(377, 85, text='Welcome!!', font=('Hello Sunday', 56), anchor=NW, fill='#303030')
+    canvas.create_text(380, 85, text='Welcome!!', font=('Hello Sunday', 55), anchor=NW, fill="#D22B2B")
+    canvas.create_image(290, 70, image=images[3], anchor='nw')
+
+    error_text = canvas.create_text(250, 200, text='', font=('Josefin Sans', 16), fill='', anchor=NW)
+
+    switch_label = Button(src, text='Or, Login as an Admin'.upper(),
+                          padx=30, pady=0, relief=SOLID, activebackground='#D22B2B', bg='#D22B2B',
+                          command=log_out, borderwidth=1, highlightcolor='black', fg='white',
+                          font=('Calibri Light', 12), activeforeground='white', height=1)
+    switch_label.place(x=350, y=450)

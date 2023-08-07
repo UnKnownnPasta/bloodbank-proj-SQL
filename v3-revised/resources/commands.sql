@@ -2,7 +2,7 @@
 -- New Tables
 create table if not exists Hospital (HospitalID int(4) primary key, HospitalName varchar(100) unique, Password varchar(20), Contact varchar(100), PinCode char(6) not null)
 create table if not exists BloodTable (BloodType char(2), Units int not null, RhFactor char(8))
-create table if not exists Recipients (Name varchar(40), Age int(3), Gender char(20), BloodGroup char(2), HospitalID int(4), Donations int, Transfusions int,  foreign key (HospitalID) REFERENCES Hospital(HospitalID))
+create table if not exists Recipient (Name varchar(40), Age int(3), Gender char(20), BloodGroup char(2), HospitalID int(4), Donations int, Transfusions int,  foreign key (HospitalID) REFERENCES Hospital(HospitalID))
 
 -- Tables and their coulmns:
 --     Hopsital:  ID, Name, Password, Contact, Pincode
