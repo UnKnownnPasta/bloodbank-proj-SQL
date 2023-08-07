@@ -7,9 +7,12 @@ def pathLoad(path):
 # --- Custom functions to create entries/buttons 
 def create_entry(control, varx, vary, text, **kwargs):
     from tkinter import Entry
-    kwargs.setdefault('bd', 16)
-    kwargs.setdefault('relief', 'flat')
     
+    # Set default values for the appearance of the input field
+    kwargs.setdefault('bd', 16)           # Border thickness
+    kwargs.setdefault('relief', 'flat')   # Border style
+    
+    # Create the input field using the provided parameters and default values
     entry = Entry(control, **kwargs)
     entry.place(x=varx, y=vary)
     entry.insert(0, text)
@@ -17,9 +20,12 @@ def create_entry(control, varx, vary, text, **kwargs):
 
 def create_button(control, text, varx, vary, **kwargs):
     from tkinter import Button
+
+    # Set default values for the appearance of the button
     kwargs.setdefault('activebackground', '#FF5733')
     kwargs.setdefault('background', '#EE4B2B')
 
+    # Create the button using the provided parameters and default values
     button = Button(control, text=text, padx=35, pady=10, font=('Century Gothic', 11), bd=0, **kwargs)
     button.pack()
     button.place(x=varx, y=vary)

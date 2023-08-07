@@ -3,10 +3,12 @@ from utils import pathLoad, create_button, create_entry, create_images
 # --------------------- Define some basics for login and general program ----------------------
 
 def setText(entry, defaultText):
-    entry.delete(0, END) if entry.get().strip() == defaultText else None
+    if entry.get().strip() == defaultText:
+        entry.delete(0, "end")
 
 def restoreText(entry, defaultText):
-    entry.insert(0, defaultText) if entry.get().strip() == "" else None
+    if entry.get().strip() == "":
+        entry.insert(0, defaultText)
 
 count = 0
 
@@ -14,8 +16,7 @@ images = create_images()
 
 # --------------------------------- Welcome page handling -------------------------------------
 
-from tkinter import *
-from tkinter import Canvas, Button, messagebox
+from tkinter import Canvas, Button, messagebox, Label
 
 def create_canvas(src, img):
     canvas = Canvas(src, width=img[7].width(), height=img[7].height(), highlightthickness=0)
@@ -27,16 +28,17 @@ def bind_events(widget, text):
     widget.bind('<FocusOut>', lambda event: restoreText(widget, text))
 
 def switch_to_entry(src, img):
-    global temporary_button
-    temporary_button.destroy()
-    submit = create_button(src, 'Login', 405, 360,
-                    command=lambda: validate(hospital_name.get(), user_name.get(), src))
+    validate('asvc', 'cvxcv', src)
+    # global temporary_button
+    # temporary_button.destroy()
+    # submit = create_button(src, 'Login', 405, 360,
+    #                 command=lambda: validate(hospital_name.get(), user_name.get(), src))
 
-    hospital_name = create_entry(src, 240, 240, 'Hospital Name', width=70)
-    bind_events(hospital_name, 'Hospital Name')
+    # hospital_name = create_entry(src, 240, 240, 'Hospital Name', width=70)
+    # bind_events(hospital_name, 'Hospital Name')
 
-    user_name = create_entry(src, 240, 300, 'Your Name', width=70)
-    bind_events(user_name, 'Your Name')
+    # user_name = create_entry(src, 240, 300, 'Your Name', width=70)
+    # bind_events(user_name, 'Your Name')
 
 def display_error():
     global count, error_text
@@ -67,17 +69,17 @@ def welcome_screen(src):
     canvas.create_image(0, 0, image=images[7], anchor='nw')
 
     temporary_button = Button(src, command=lambda: switch_to_entry(src, images),
-                              bd=0, activebackground='#D22B2B', bg='#EE4B2B', relief=FLAT, image=images[8])
+                              bd=0, activebackground='#D22B2B', bg='#EE4B2B', relief="flat", image=images[8])
     temporary_button.place(x=310, y=250)
 
-    canvas.create_text(377, 85, text='Welcome!!', font=('Hello Sunday', 56), anchor=NW, fill='#303030')
-    canvas.create_text(380, 85, text='Welcome!!', font=('Hello Sunday', 55), anchor=NW, fill="#D22B2B")
+    canvas.create_text(377, 85, text='Welcome!!', font=('Hello Sunday', 56), anchor="nw", fill='#303030')
+    canvas.create_text(380, 85, text='Welcome!!', font=('Hello Sunday', 55), anchor="nw", fill="#D22B2B")
     canvas.create_image(290, 70, image=images[3], anchor='nw')
 
-    error_text = canvas.create_text(250, 200, text='', font=('Josefin Sans', 16), fill='', anchor=NW)
+    error_text = canvas.create_text(250, 200, text='', font=('Josefin Sans', 16), fill='', anchor="nw")
 
     switch_label = Button(src, text='Or, Login as an Admin'.upper(),
-                          padx=30, pady=0, relief=SOLID, activebackground='#D22B2B', bg='#D22B2B',
+                          padx=30, pady=0, relief="solid", activebackground='#D22B2B', bg='#D22B2B',
                           command=log_out, borderwidth=1, highlightcolor='black', fg='white',
                           font=('Calibri Light', 12), activeforeground='white', height=1)
     switch_label.place(x=350, y=450)

@@ -15,8 +15,7 @@ MYSQL_PASSWORD = "root"
 root = Tk()
 
 #     and intialises its basic features
-root.title('Blood Bank System')
-root.title('Blood Bank Mng')
+root.title('Blood Bank Manager')
 root.iconphoto(False, PhotoImage( file=pathLoad('resources/icons/logo-120.png') ))
 root.resizable(False, False)
 

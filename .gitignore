@@ -2,7 +2,7 @@
 versions/*
 !versions/v1
 !versions/v2
-/.vscode/
-DEV
 __pycache__
 *.zip
+v3-revised/_old
+filedump
