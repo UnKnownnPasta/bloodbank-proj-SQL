@@ -1,4 +1,5 @@
-from tkinter import Entry, Button, Label, messagebox
+from tkinter import Button, Entry, Label, messagebox
+
 
 def pinVerify(pin) -> True:
     if not pin.isdigit() or pin[0] == '0' or len(pin) != 6:
@@ -8,7 +9,7 @@ def pinVerify(pin) -> True:
         return False
     return True
 
-from __main__ import signup_var, login_var
+from __main__ import login_var, signup_var
 
 # -------------------------------- Switch between Login and Signup (Admin) --------------------------------
 
