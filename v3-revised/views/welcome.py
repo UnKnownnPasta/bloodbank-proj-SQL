@@ -19,7 +19,7 @@ images = create_images()
 from tkinter import Canvas, Button, messagebox, Label
 
 def create_canvas(src, img):
-    canvas = Canvas(src, width=img[7].width(), height=img[7].height(), highlightthickness=0)
+    canvas = Canvas(src, width=940, height=500, highlightthickness=0)
     canvas.pack(side="top", fill="both", expand=True)
     return canvas
 
@@ -28,17 +28,16 @@ def bind_events(widget, text):
     widget.bind('<FocusOut>', lambda event: restoreText(widget, text))
 
 def switch_to_entry(src, img):
-    validate('asvc', 'cvxcv', src)
-    # global temporary_button
-    # temporary_button.destroy()
-    # submit = create_button(src, 'Login', 405, 360,
-    #                 command=lambda: validate(hospital_name.get(), user_name.get(), src))
+    global temporary_button
+    temporary_button.destroy()
+    submit = create_button(src, 'Login', 405, 360,
+                    command=lambda: validate(hospital_name.get(), user_name.get(), src))
 
-    # hospital_name = create_entry(src, 240, 240, 'Hospital Name', width=70)
-    # bind_events(hospital_name, 'Hospital Name')
+    hospital_name = create_entry(src, 240, 240, 'Hospital Name', width=70)
+    bind_events(hospital_name, 'Hospital Name')
 
-    # user_name = create_entry(src, 240, 300, 'Your Name', width=70)
-    # bind_events(user_name, 'Your Name')
+    user_name = create_entry(src, 240, 300, 'Your Name', width=70)
+    bind_events(user_name, 'Your Name')
 
 def display_error():
     global count, error_text
@@ -50,6 +49,12 @@ def validate(hospname, usrname, r):
         if len(value.strip()) == 0 or value in ['Hospital Name', 'Your Name'] or value.isdigit():
             display_error()
             return
+
+    from __main__ import cursor
+    cursor.execute("SELECT COUNT(*) FROM hospital, recipient WHERE HospitalName='%s' AND Name='%s'"%(hospname, usrname))
+    if cursor.fetchone()[0] == 0:
+        display_error()
+        return
 
     a = list(r.__dict__['children'].values())
     for widget in a:

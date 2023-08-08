@@ -15,7 +15,7 @@ MYSQL_PASSWORD = "root"
 root = Tk()
 
 #     and intialises its basic features
-root.title('Blood Bank Manager')
+root.title('Blood Bank System')
 root.iconphoto(False, PhotoImage( file=pathLoad('resources/icons/logo-120.png') ))
 root.resizable(False, False)
 
@@ -45,10 +45,10 @@ cursor.execute('show tables')
 
   # ...executed if no tables exist
 if len(cursor.fetchall()) == 0:
-    with open('resources/commands.sql') as f:
-        for f in commands.readlines():
-            if f.split()[0] == 'create':
-                cursor.execute(line)
+    with open(pathLoad('resources/commands.sql')) as f:
+        for l in f.readlines():
+            if l.startswith('create'):
+                cursor.execute(l)
 
 
 #    finally, start the program
