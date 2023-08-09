@@ -64,9 +64,19 @@ def validate(hospname, usrname, r):
     from views.user_view import user_window
     user_window(hospname, usrname, r, images)
 
-def log_out():
-    pass
+def log_out(r):
+    # Later admin login part will be added
 
+    a = list(r.__dict__['children'].values())
+    for widget in a:
+        widget.destroy()
+    from views.admin_view import admin_view
+    admin_view('Hospital 101', 'hosp_pass', 1001, 123123, r)
+    # this will change later
+
+
+
+# -- The main function that handles the page
 def welcome_screen(src):
     global images, canvas, temporary_button, error_text
 
@@ -83,8 +93,8 @@ def welcome_screen(src):
 
     error_text = canvas.create_text(250, 200, text='', font=('Josefin Sans', 16), fill='', anchor="nw")
 
-    switch_label = Button(src, text='Or, Login as an Admin'.upper(),
-                          padx=30, pady=0, relief="solid", activebackground='#D22B2B', bg='#D22B2B',
-                          command=log_out, borderwidth=1, highlightcolor='black', fg='white',
+    switch_label = Button(src, text='Or, Login as an Admin'.upper(), padx=30, pady=0,
+                          relief="solid", activebackground='#D22B2B', bg='#D22B2B', fg='white',
+                          command= lambda: log_out(src), borderwidth=1, highlightcolor='black',
                           font=('Calibri Light', 12), activeforeground='white', height=1)
     switch_label.place(x=350, y=450)

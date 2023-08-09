@@ -4,6 +4,11 @@ import os
 def pathLoad(path): 
     return os.path.join(os.path.dirname(__file__), path)
 
+# -- Function to verify given pin code
+def pinVerify(pin):
+    return True
+    # SQL isn't fully implemented yet
+
 # --- Custom functions to create entries/buttons 
 def create_entry(control, varx, vary, text, **kwargs):
     from tkinter import Entry
@@ -41,7 +46,8 @@ def create_images():
         'icons/logo-80.png',            'icons/logo-120.png',
         'icons/profile.png',            ['icons/arrow.png', 'icons/arrow_2.png'],
         'icons/box.png',                'backgrounds/bg-auth.png',
-        'backgrounds/button.png',       'icons/lg.png'
+        'backgrounds/button.png',       'icons/lg.png',
+        'backgrounds/profile-page.png'
     ]
 
     for index, path in enumerate(image_paths):
