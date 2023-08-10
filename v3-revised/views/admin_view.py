@@ -73,7 +73,6 @@ def main_frame_handle():
 
     scroll_text(f'   Welcome {hosp_name.title()}!   ')
     active = False # Whether side-menu is open or not
-    side_bar()
     
 
 
@@ -132,8 +131,6 @@ def side_bar():
                 widget.destroy()
             from views.welcome import welcome_screen
             welcome_screen(root)
-
-    menu_options(1)
 
 # ---------------------- Profile View ----------------------
 
