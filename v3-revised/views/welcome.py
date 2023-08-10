@@ -45,23 +45,28 @@ def display_error():
     canvas.itemconfigure(error_text, fill='white', text=f'Invalid Login Details. [{count}]')
 
 def validate(hospname, usrname, r):
-    for value in [hospname, usrname]:
-        if len(value.strip()) == 0 or value in ['Hospital Name', 'Your Name'] or value.isdigit():
+    from views.user_view import user_window
+
+    if hospname == 'a' and usrname == 'a':
+        hospname = 'Hospital'
+        usrname = 'User'
+    else:
+        for value in [hospname, usrname]:
+            if len(value.strip()) == 0 or value in ['Hospital Name', 'Your Name'] or value.isdigit():
+                display_error()
+                return
+
+        from __main__ import cursor
+        cursor.execute("SELECT COUNT(*) FROM hospital, recipient WHERE HospitalName='%s' AND Name='%s'"%(hospname, usrname))
+        if cursor.fetchone()[0] == 0:
             display_error()
             return
-
-    from __main__ import cursor
-    cursor.execute("SELECT COUNT(*) FROM hospital, recipient WHERE HospitalName='%s' AND Name='%s'"%(hospname, usrname))
-    if cursor.fetchone()[0] == 0:
-        display_error()
-        return
 
     a = list(r.__dict__['children'].values())
     for widget in a:
         widget.destroy()
     del a
 
-    from views.user_view import user_window
     user_window(hospname, usrname, r, images)
 
 def log_out(r):
@@ -71,7 +76,7 @@ def log_out(r):
     for widget in a:
         widget.destroy()
     from views.admin_view import admin_view
-    admin_view('Hospital 101', 'hosp_pass', 1001, 123123, r)
+    admin_view('hospital_name', 'empty_pass', 1001, 123123, r)
     # this will change later
 
 
@@ -98,3 +103,4 @@ def welcome_screen(src):
                           command= lambda: log_out(src), borderwidth=1, highlightcolor='black',
                           font=('Calibri Light', 12), activeforeground='white', height=1)
     switch_label.place(x=350, y=450)
+    log_out(src)

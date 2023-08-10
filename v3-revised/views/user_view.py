@@ -42,6 +42,8 @@ def main_info_frame(ctrl, img):
     cur = con.cursor()
     cur.execute(f"select * from recipient where Name='{USER}'")
     data = cur.fetchone()
+    if data == None:
+        data = [0000, '', 00, '-', '-', 0]
     cur.execute(f"select count(*) from record where ID={data[0]}")
 
     name = Label(ctrl, bg='#7B1818', width=10, height=1, text=USER, fg='white', anchor="center",

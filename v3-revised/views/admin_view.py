@@ -73,6 +73,8 @@ def main_frame_handle():
 
     scroll_text(f'   Welcome {hosp_name.title()}!   ')
     active = False # Whether side-menu is open or not
+    side_bar()
+    
 
 
 # ------------------------ Side Bar -------------------------
@@ -92,10 +94,10 @@ def side_bar():
         "font": ("Corbel", 15), "padx":10, "relief": "flat", "fg": "white", "underline": 4,
         "activeforeground":"white", "background":"#D22B2B", "activebackground":"#D22B2B"
     }
-    option_1 = Button(home_bar, text='⦿    Donate Blood', **optionLooks, command= lambda: dntBld())
-    option_2 = Button(home_bar, text='⦿    Retrieve Blood', **optionLooks, command= lambda: retrBld())
-    option_3 = Button(home_bar, text='⦿    See Blood Bank', **optionLooks, command= lambda: bloodBnk())
-    option_4 = Button(home_bar, text='EXIT', **optionLooks, command= lambda: opt_4())
+    option_1 = Button(home_bar, text='⦿    Donate/Recieve\nBlood', **optionLooks, command= lambda: menu_options(1))
+    option_2 = Button(home_bar, text='⦿    See Blood Bank', **optionLooks, command= lambda: menu_options(2))
+    option_3 = Button(home_bar, text='⦿    View History', **optionLooks, command= lambda: menu_options())
+    option_4 = Button(home_bar, text='EXIT', **optionLooks, command= lambda: menu_options())
 
     option_1.place(x=16, y=30)
     option_2.place(x=16, y=100)
@@ -109,18 +111,29 @@ def side_bar():
         try: frame_bb.destroy()
         except: pass
 
-    def dntBld(): dropFrame('    Now Donating Blood    ')
-    def retrBld(): dropFrame('    Now Retrieving Blood    ')
-    def bloodBnk():dropFrame('    Now Managing Blood Database    ')
-    # To be continued
+    def menu_options(c):
+        visible_frame = Frame(root, width=root.winfo_screenwidth(), height=440)
+        visible_frame.place(x=0, y=69)
 
-    def opt_4():
-        a = list(root.__dict__['children'].values())
-        for widget in a:
-            widget.destroy()
-        from views.welcome import welcome_screen
-        welcome_screen(root)
+        if c == 1:
+            dropFrame('    Now Donating Blood    ')
+            from views.sub_admin import donate_blood
+            donate_blood(visible_frame)
 
+        elif c == 2:
+            dropFrame('    Now Managing Blood Storage    ')
+
+        elif c == 3:
+            dropFrame('    Now Blood Bank History    ')
+
+        elif c == 4:
+            a = list(root.__dict__['children'].values())
+            for widget in a:
+                widget.destroy()
+            from views.welcome import welcome_screen
+            welcome_screen(root)
+
+    menu_options(1)
 
 # ---------------------- Profile View ----------------------
 
