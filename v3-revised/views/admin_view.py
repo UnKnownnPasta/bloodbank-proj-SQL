@@ -12,6 +12,8 @@ def admin_view(user, passw, hid, pin, s):
     hosp_id = hid
     pincode = pin
 
+    s.configure(bg='white')
+
     root = s
 
     topRoot = Toplevel(s)
@@ -95,8 +97,8 @@ def side_bar():
     }
     option_1 = Button(home_bar, text='⦿    Donate/Recieve\nBlood', **optionLooks, command= lambda: menu_options(1))
     option_2 = Button(home_bar, text='⦿    See Blood Bank', **optionLooks, command= lambda: menu_options(2))
-    option_3 = Button(home_bar, text='⦿    View History', **optionLooks, command= lambda: menu_options())
-    option_4 = Button(home_bar, text='EXIT', **optionLooks, command= lambda: menu_options())
+    option_3 = Button(home_bar, text='⦿    View History', **optionLooks, command= lambda: menu_options(3))
+    option_4 = Button(home_bar, text='EXIT', **optionLooks, command= lambda: menu_options(4))
 
     option_1.place(x=16, y=30)
     option_2.place(x=16, y=100)
