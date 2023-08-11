@@ -3,7 +3,7 @@
 create table if not exists Hospital (HospitalID int(4) primary key, HospitalName varchar(100) unique, Password varchar(20), Contact varchar(100), PinCode int(6) not null)
 create table if not exists BloodTable (BloodType char(3), Units int not null, RhFactor char(1))
 create table if not exists Recipient (ID int(4) primary key, Name varchar(40), Age int(3), Gender char(20), BloodGroup char(4), Donations int, Transfusions int)
-create table if not exists Record (ID int(4), Date date, Transfusion char(100),  foreign key (ID) REFERENCES Recipient(ID))
+-- create table if not exists Record (ID int(4), Date date, Transfusion char(100),  foreign key (ID) REFERENCES Recipient(ID))
 
 -- Tables and their coulmns:
 --     Hopsital:  ID, Name, Password, Contact, Pincode
@@ -12,6 +12,7 @@ create table if not exists Record (ID int(4), Date date, Transfusion char(100), 
 --     Records:   ID, Date, Action
 
 insert into BloodTable values ('A', 0, '+'), ('A', 0, '-'), ('B', 0, '+'), ('B', 0, '-'), ('O', 0, '+'), ('O', 0, '-'), ('AB', 0, '+'), ('AB', 0, '-')
+insert into Hospital values (1010, 'a', 'a', 'hospitalemail@gmail.com / 1233219', 366066)
 
 -- Old tables
 -- create table if not exists Donor (Name varchar(40), Age int(3), Gender char(20), BloodGroup char(2), HospitalID int(4), foreign key (HospitalID) references Hospital(HospitalID))

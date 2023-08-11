@@ -1,13 +1,20 @@
 import os
 
+
 # --- Function to fetch absolute path to a file
 def pathLoad(path): 
     return os.path.join(os.path.dirname(__file__), path)
 
+
 # -- Function to verify given pin code
-def pinVerify(pin):
-    return True
-    # SQL isn't fully implemented yet
+def pinVerify(pin) -> True:
+    if isinstance(pin, str):
+        return False
+    elif str(pin)[0] == '0' or len(str(pin)) != 6:
+        return False
+    elif int(str(pin)[:2]) in [29, 35, 54, 55, 65, 66]:
+        return False
+
 
 # --- Custom functions to create entries/buttons 
 def create_entry(control, varx, vary, text, **kwargs):
@@ -27,11 +34,13 @@ def create_button(control, text, varx, vary, **kwargs):
     from tkinter import Button
 
     # Set default values for the appearance of the button
-    kwargs.setdefault('activebackground', '#FF5733')
-    kwargs.setdefault('background', '#EE4B2B')
+    defaults = (['activebackground', '#FF5733'], ['background', '#EE4B2B'],
+    ['font', ('Century Gothic', 11)], ['bd', 0], ['padx', 35], ['pady', 10])
+    for i in defaults:
+        kwargs.setdefault(i[0], i[1])
 
     # Create the button using the provided parameters and default values
-    button = Button(control, text=text, padx=35, pady=10, font=('Century Gothic', 11), bd=0, **kwargs)
+    button = Button(control, text=text, **kwargs)
     button.pack()
     button.place(x=varx, y=vary)
     return button

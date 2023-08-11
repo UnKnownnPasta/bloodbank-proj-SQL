@@ -28,7 +28,7 @@ def bind_events(widget, text):
     widget.bind('<FocusOut>', lambda event: restoreText(widget, text))
 
 def switch_to_entry(src, img):
-    global temporary_button
+    global temporary_button, hospital_name, user_name
     temporary_button.destroy()
     submit = create_button(src, 'Login', 405, 360,
                     command=lambda: validate(hospital_name.get(), user_name.get(), src))
@@ -71,13 +71,12 @@ def validate(hospname, usrname, r):
 
 def log_out(r):
     # Later admin login part will be added
-
     a = list(r.__dict__['children'].values())
     for widget in a:
         widget.destroy()
-    from views.admin_view import admin_view
-    admin_view('hospital_name', 'empty_pass', 1001, 123123, r)
-    # this will change later
+
+    from views.admin_login import admin_login
+    admin_login(r, )
 
 
 

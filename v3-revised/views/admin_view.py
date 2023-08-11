@@ -13,7 +13,6 @@ def admin_view(user, passw, hid, pin, s):
     pincode = pin
 
     s.configure(bg='white')
-
     root = s
 
     topRoot = Toplevel(s)
@@ -60,7 +59,7 @@ def main_frame_handle():
     btnLooks = {
         "bg":"#D22B2B", "relief":"flat", "activebackground":"#D22B2B"
     }
-    menu_btn = Button(title_bar, image=img[0], **btnLooks, command= lambda: side_bar())
+    menu_btn = Button(title_bar, image=img[0], **btnLooks, command= lambda: side_bar(hosp_id))
     menu_btn.pack(side=LEFT)
     logo_lbl = Label(title_bar, bg="#D22B2B", image=globalImages[2])
     logo_lbl.pack(side=LEFT, padx=10)
@@ -75,12 +74,11 @@ def main_frame_handle():
 
     scroll_text(f'   Welcome {hosp_name.title()}!   ')
     active = False # Whether side-menu is open or not
-    
 
 
 # ------------------------ Side Bar -------------------------
 
-def side_bar():
+def side_bar(id):
     global home_bar, active, root
     if active == True:
         home_bar.destroy()
@@ -95,15 +93,10 @@ def side_bar():
         "font": ("Corbel", 15), "padx":10, "relief": "flat", "fg": "white", "underline": 4,
         "activeforeground":"white", "background":"#D22B2B", "activebackground":"#D22B2B"
     }
-    option_1 = Button(home_bar, text='⦿    Donate/Recieve\nBlood', **optionLooks, command= lambda: menu_options(1))
-    option_2 = Button(home_bar, text='⦿    See Blood Bank', **optionLooks, command= lambda: menu_options(2))
-    option_3 = Button(home_bar, text='⦿    View History', **optionLooks, command= lambda: menu_options(3))
-    option_4 = Button(home_bar, text='EXIT', **optionLooks, command= lambda: menu_options(4))
-
-    option_1.place(x=16, y=30)
-    option_2.place(x=16, y=100)
-    option_3.place(x=16, y=170)
-    option_4.place(x=10, y=380)
+    option_1 = create_button(home_bar, '⦿    Donate/Recieve\nBlood', 16, 30, **optionLooks, command= lambda: menu_options(1))
+    option_2 = create_button(home_bar, '⦿    See Blood Bank', 16, 100, **optionLooks, command= lambda: menu_options(2))
+    # option_3 = create_button(home_bar, '⦿    View History', 16, 170, **optionLooks, command= lambda: menu_options(3))
+    option_4 = create_button(home_bar, 'EXIT', 10, 380, **optionLooks, command= lambda: menu_options(4))
 
     def dropFrame(txt):
         global active
@@ -118,21 +111,18 @@ def side_bar():
 
         if c == 1:
             dropFrame('    Now Donating Blood    ')
-            from views.sub_admin import donate_blood
-            donate_blood(visible_frame)
-
-        elif c == 2:
-            dropFrame('    Now Managing Blood Storage    ')
-
-        elif c == 3:
-            dropFrame('    Now Blood Bank History    ')
-
+            from views.sub_admin import donation_choice
+            donation_choice(visible_frame, id)
+        elif c == 2: dropFrame('    Now Managing Blood Storage    ')
+        # elif c == 3: dropFrame('    Now Seeing Blood Bank History    ')
         elif c == 4:
             a = list(root.__dict__['children'].values())
             for widget in a:
                 widget.destroy()
             from views.welcome import welcome_screen
             welcome_screen(root)
+
+    # menu_options(1)
 
 # ---------------------- Profile View ----------------------
 
@@ -177,13 +167,13 @@ def sub_profile_view():
         placeNegative([editBtn_leave, editBtn_save, pinEntry])
 
     def profileSaveEdit():
-        query = "update hospital set PinCode=%s where HospitalID=%s"
+        query = "update hospital set PinCode=%s where HospitalName=%s"
         pinVal = pinEntry.get()
 
         if pinVerify(pinVal) == True:
-            values = (pinVal, hosp_id)
-            app.cursor.execute(query, values)
-            app.connection.commit(); 
+            values = (pinVal, hosp_name)
+            cursor.execute(query, values)
+            connection.commit()
 
             pincode = pinVal
             profCanvas.itemconfigure(Pin, text=f'Pin Code: {pincode}')
