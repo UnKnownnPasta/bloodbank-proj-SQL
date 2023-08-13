@@ -93,10 +93,10 @@ def side_bar(id):
         "font": ("Corbel", 15), "padx":10, "relief": "flat", "fg": "white", "underline": 4,
         "activeforeground":"white", "background":"#D22B2B", "activebackground":"#D22B2B"
     }
-    option_1 = create_button(home_bar, '⦿    Donate/Recieve\nBlood', 16, 30, **optionLooks, command= lambda: menu_options(1))
-    option_2 = create_button(home_bar, '⦿    See Blood Bank', 16, 100, **optionLooks, command= lambda: menu_options(2))
-    # option_3 = create_button(home_bar, '⦿    View History', 16, 170, **optionLooks, command= lambda: menu_options(3))
-    option_4 = create_button(home_bar, 'EXIT', 10, 380, **optionLooks, command= lambda: menu_options(4))
+    create_button(home_bar, '⦿    Donate/Recieve\nBlood', 16, 30, **optionLooks, command= lambda: menu_options(1))
+    create_button(home_bar, '⦿    See Blood Bank', 16, 100, **optionLooks, command= lambda: menu_options(2))
+    create_button(home_bar, '⦿    Add User', 16, 170, **optionLooks, command= lambda: menu_options(3))
+    create_button(home_bar, 'EXIT', 10, 380, **optionLooks, command= lambda: menu_options(4))
 
     def dropFrame(txt):
         global active
@@ -114,7 +114,7 @@ def side_bar(id):
             from views.sub_admin import donation_choice
             donation_choice(visible_frame, id)
         elif c == 2: dropFrame('    Now Managing Blood Storage    ')
-        # elif c == 3: dropFrame('    Now Seeing Blood Bank History    ')
+        elif c == 3: dropFrame('    Now Managing Users    ')
         elif c == 4:
             a = list(root.__dict__['children'].values())
             for widget in a:

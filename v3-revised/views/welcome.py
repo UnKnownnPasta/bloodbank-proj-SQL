@@ -16,7 +16,9 @@ images = create_images()
 
 # --------------------------------- Welcome page handling -------------------------------------
 
-from tkinter import Canvas, Button, messagebox, Label
+from tkinter import Canvas, Button, messagebox, Label, Toplevel, Entry
+import random
+from __main__ import x_coordinate, y_coordinate
 
 def create_canvas(src, img):
     canvas = Canvas(src, width=940, height=500, highlightthickness=0)
@@ -45,7 +47,9 @@ def display_error():
     canvas.itemconfigure(error_text, fill='white', text=f'Invalid Login Details. [{count}]')
 
 def validate(hospname, usrname, r):
+    global entries
     from views.user_view import user_window
+    from __main__ import cursor, connection
 
     if hospname == 'a' and usrname == 'a':
         hospname = 'Hospital'
@@ -56,18 +60,62 @@ def validate(hospname, usrname, r):
                 display_error()
                 return
 
-        from __main__ import cursor
-        cursor.execute("SELECT COUNT(*) FROM hospital, recipient WHERE HospitalName='%s' AND Name='%s'"%(hospname, usrname))
+        cursor.execute("SELECT COUNT(*) FROM hospital WHERE HospitalName='%s'"%(hospname,))
         if cursor.fetchone()[0] == 0:
             display_error()
             return
 
-    a = list(r.__dict__['children'].values())
-    for widget in a:
-        widget.destroy()
-    del a
+        cursor.execute(f'select count(*) from recipient where Name="{usrname}"')
+        if cursor.fetchone()[0] == 0:
+            global entries
+            popup = Toplevel(r)
+            popup.geometry(f'250x130+{int(x_coordinate)+200}+{int(y_coordinate)+100}')
+            
+            entries = []
+            current_step = 0
+        
+            def create_entry_popup(text):
+                nonlocal current_step
+                if entries:
+                    for w in list(popup.__dict__['children'].values()):
+                        if not isinstance(w, Entry): w.destroy()
+                    entries[-1].pack_forget()  # Hide the previous entry
+                
+                lbl = Label(popup, text=text)
+                lbl.pack()
+                entry = create_entry(popup, 0, 20, '')
+                entry.pack()
+                entries.append(entry)
+                submit_button = create_button(popup, "Submit", 0, 50, command=lambda: process_entry())
+                submit_button.pack()
+                current_step += 1
+            
+            def process_entry():
+                global entries
+                nonlocal current_step
+                values = [entry.get() for entry in entries]
+                if current_step < 3:
+                    create_entry_popup(["Enter your Age:", "Enter your Sex:", "Enter your Blood Type:"][current_step])
+                else:
+                    cursor.execute(f'insert into recipient values ({random.randint(1000, 9999)}, "{usrname}", {int(entries[0].get())}, "{entries[1].get()}", "{entries[2].get()}", 0, 0)')
+                    connection.commit()
 
-    user_window(hospname, usrname, r, images)
+                    for widget in list(r.__dict__['children'].values()):
+                        try: widget.destroy()
+                        except: pass
+
+                    user_window(hospname, usrname, r, images)
+                    popup.destroy()
+                
+            process_entry()
+        else:
+            for widget in list(r.__dict__['children'].values()):
+                try: widget.destroy()
+                except: pass
+
+            user_window(hospname, usrname, r, images)
+
+
 
 def log_out(r):
     # Later admin login part will be added
