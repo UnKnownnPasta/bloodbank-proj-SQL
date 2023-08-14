@@ -82,7 +82,25 @@ def donate_blood_hospital(src, tt):
         bd=0, activebackground='#D22B2B', bg='#EE4B2B', relief="flat", font=('Cascadia Code', 15))
     proceed.place(x=40, y=300)
 
-    reset = Button(src, text='Reset Selections', command=lambda: reset_selected(),
-        bd=0, activebackground='#D22B2B', bg='#EE4B2B', relief="flat", font=('Cascadia Code', 15))
-    reset.place(x=40, y=30)
+    def finish(ctrl):
+        global selected, id
+        status = 0
 
+        for i in selected:
+            cursor.execute('select Units from bloodtable where concat(BloodType, RhFactor) = "%s"'%(i,))
+            if cursor.fetchone()[0] == 0: status = 1
+            q = f'update bloodtable set Units = Units - 1 where concat(BloodType, RhFactor) = "{i}"'
+            cursor.execute(q)
+        else: pass
+
+        if status == 1:
+            messagebox.showerror('Error', 'Not enough storage of blood available')
+            connection.rollback()
+            return
+        else: connection.commit()
+
+        cursor.execute('select HospitalName, HospitalID from hospital where HospitalID = %s'%(id))
+        data = cursor.fetchone()
+        messagebox.showinfo('Success', f'Updated unit of bloods stored in your bank, {data[0]} to {blood_sval.get()}')
+        destroy_frameitems(ctrl)
+        donate_blood_hospital(ctrl, tt=tt)

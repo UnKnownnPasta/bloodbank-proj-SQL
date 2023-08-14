@@ -56,7 +56,7 @@ def create_images():
         'icons/profile.png',            ['icons/arrow.png', 'icons/arrow_2.png'],
         'icons/box.png',                'backgrounds/bg-auth.png',
         'backgrounds/button.png',       'icons/lg.png',
-        'backgrounds/profile-page.png'
+        'backgrounds/profile-page.png', 'backgrounds/admin_welcome.png'
     ]
 
     for index, path in enumerate(image_paths):

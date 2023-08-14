@@ -40,6 +40,7 @@ def admin_login(ctrl):
     user_pass.bind('<FocusOut>', lambda event: restoreText(user_pass, 'Password'))
 
     submit_button = create_button(root, 'Login', 410, 380, command= lambda: validate_cred(user_name.get(), user_pass.get()))
+    validate_cred('Hospital Name', 'a')
 
 def validate_cred(un, up):
     global ctrl

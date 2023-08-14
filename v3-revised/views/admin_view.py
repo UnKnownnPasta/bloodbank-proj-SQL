@@ -54,7 +54,7 @@ def main_frame_handle():
     title_bar = Frame(root, bg="#D22B2B", height=30)
     title_bar.pack(fill=X)
     title_bar.place(rely=0.045, relwidth=1)
-    img = [PhotoImage(file=pathLoad('resources/icons/menu.png')), PhotoImage(file=pathLoad('resources/icons/cog.png'))]
+    img = [PhotoImage(file=pathLoad('resources/icons/menu.png')), PhotoImage(file=pathLoad('resources/icons/home.png'))]
 
     btnLooks = {
         "bg":"#D22B2B", "relief":"flat", "activebackground":"#D22B2B"
@@ -67,19 +67,44 @@ def main_frame_handle():
     title_label = Label(title_bar, text=hosp_name.title(), fg="white", bg="#D22B2B", font=('Josefin Sans', 17), pady=0)
     title_label.place(x=95, y=0)
 
-    profile_btn = create_button(title_bar, '', 830, 0, background='#d22b2b', activebackground='#d22b2b',
-        image=globalImages[4], command= lambda: sub_profile_view()
-    )
-    settings_btn = create_button(title_bar, '', 880, 0, background='#d22b2b', activebackground='#d22b2b', image=img[1])
+    profile_btn = create_button(title_bar, '', 830, 2, background='#D22B2B', activebackground='#D22B2B',
+        image=globalImages[4], command= lambda: sub_profile_view())
+
+    home_btn = create_button(title_bar, '', 880, 2, background='#D22B2B', activebackground='#D22B2B',
+        image=img[1], command=lambda: home_page())
 
     scroll_text(f'   Welcome {hosp_name.title()}!   ')
     active = False # Whether side-menu is open or not
 
+    global ttl, visible_frame
+
+    visible_frame = Frame(root, width=root.winfo_screenwidth(), height=440)
+    visible_frame.place(x=0, y=69)
+
+    ttl = Label(visible_frame, text='|    Hospital Management System', font=('Cascadia Code', 22), width=55, bg='#FBFCF8', height=1, anchor='w')
+    ttl.place(x=0, y=20)
+
+    def home_page():
+        for i in list(visible_frame.__dict__['children'].values()):
+            if isinstance(i, Label):
+                if not i['text'].startswith('|'): i.destroy()
+            else: i.destroy()
+
+        bg = Label(visible_frame, image=globalImages[11])
+        bg.place(x=-2, y=-2)
+        bg.lower()
+
+        xxx = Label(visible_frame, width=140, bg='#FBFCF8', height=8, font=('Cascadia Code', 17), anchor=NW, justify=LEFT)
+        xxx.place(x=-1, y=230)
+        xxx['text'] = '\n|   App Guide:\n\n1.     ≡ is to navigate the menu\n2.     Profile button is to update hosptial details'
+
+    home_page()
+    side_bar(hosp_id)
 
 # ------------------------ Side Bar -------------------------
 
 def side_bar(id):
-    global home_bar, active, root
+    global home_bar, active, root, ttl, visible_frame
     if active == True:
         home_bar.destroy()
         active = False; return
@@ -102,27 +127,33 @@ def side_bar(id):
         global active
         active = False; home_bar.destroy()
         scroll_text(txt)
-        try: frame_bb.destroy()
-        except: pass
 
     def menu_options(c):
-        visible_frame = Frame(root, width=root.winfo_screenwidth(), height=440)
-        visible_frame.place(x=0, y=69)
-
         if c == 1:
             dropFrame('    Now Donating Blood    ')
-            from views.sub_admin import donation_choice
-            donation_choice(visible_frame, id)
-        elif c == 2: dropFrame('    Now Managing Blood Storage    ')
-        elif c == 3: dropFrame('    Now Managing Users    ')
+            from views.admin_windows.admin_option_1 import donation_choice
+            donation_choice(visible_frame, id, ttl)
+            ttl['text'] = '|    Choose an option'
+
+        elif c == 2: 
+            dropFrame('    Now Managing Blood Storage    ')
+            ttl['text'] = '|    Viewing Blood Storage'
+            from views.admin_windows.admin_option_2 import table_data
+            table_data(visible_frame, ttl)
+
+        elif c == 3:
+            dropFrame('    Now Managing Users    ')
+            ttl['text'] = '|    Managing User Database'
+            from views.admin_windows.admin_option_3 import abc
+            abc()
+
         elif c == 4:
-            a = list(root.__dict__['children'].values())
-            for widget in a:
-                widget.destroy()
+            for widget in list(root.__dict__['children'].values()): widget.destroy()
+
             from views.welcome import welcome_screen
             welcome_screen(root)
 
-    # menu_options(1)
+    menu_options(1)
 
 # ---------------------- Profile View ----------------------
 

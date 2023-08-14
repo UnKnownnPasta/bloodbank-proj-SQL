@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 import mysql.connector as sql
 root = Tk()
-img = PhotoImage(file='plus.png')
+# img = PhotoImage(file='plus.png')
 db = 'school'
 password = 'root'
 
@@ -28,7 +28,7 @@ def create_button(tw, cmd, text, x, y):
 def main(): # Login Screen
     global root, signinLabel, usernameLbl, passwLbl, unField, pwField, loginBtn
     root.title('Blood Bank Management')
-    root.iconphoto(False, img)
+    # root.iconphoto(False, img)
     root.geometry('400x300')
     root.resizable(False, False)
     
@@ -78,7 +78,7 @@ def detailsWindow(passw) -> None:
 
         text_1 = create_label(root, '| INITIALIZE', 40, 15, ('Franklin Gothic', 20))
 
-        OutputLbl = create_label(root, 'Output', 40, 330, ('Lucida Console', 8))
+        OutputLbl = create_label(root, 'Output', 40, 330, ('Arial', 8))
         OutputLbl.config(width=90, justify=LEFT, height=12, bg='white', highlightbackground="black", highlightthickness=1, padx=6)
       
         # A dictionary containing all color, border font stuff of buttons
@@ -129,7 +129,7 @@ def detailsWindow(passw) -> None:
             win_1 = Toplevel(root)
             win_1.geometry('500x300')
             win_1.title('')
-            win_1.iconphoto(False, img)
+            # win_1.iconphoto(False, img)
             win_1.resizable(False, False)
 
             heading = create_label(win_1, '| QUERY', 40, 15, ('Franklin Gothic', 20))
@@ -186,7 +186,7 @@ def detailsWindow(passw) -> None:
             win_2 = Toplevel(root)
             win_2.geometry('500x300')
             win_2.title('')
-            win_2.iconphoto(False, img)
+            # win_2.iconphoto(False, img)
             win_2.resizable(False, False)
 
             heading = create_label(win_2, '| INSERT', 40, 15, ('Franklin Gothic', 20))
@@ -212,7 +212,7 @@ def detailsWindow(passw) -> None:
             win_3 = Toplevel(root)
             win_3.geometry('500x300')
             win_3.title('')
-            win_3.iconphoto(False, img)
+            # win_3.iconphoto(False, img)
             win_3.resizable(False, False)
 
             heading = create_label(win_3, '| DELETE', 40, 15, ('Franklin Gothic', 20))
@@ -238,7 +238,7 @@ def detailsWindow(passw) -> None:
             win_4 = Toplevel(root)
             win_4.geometry('500x300')
             win_4.title('')
-            win_4.iconphoto(False, img)
+            # win_4.iconphoto(False, img)
             win_4.resizable(False, False)
 
             heading = create_label(win_4, '| UPDATE', 40, 15, ('Franklin Gothic', 20))
