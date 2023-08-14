@@ -15,7 +15,7 @@ Update `MYSQL_PASSWORD` variable in `functions.py` (in `__main__` for v3) to you
 
 Clone the project
 ```bash
-git clone https://github.com/UnKnownnPasta/school-project-BBSQL.git
+git clone https://github.com/UnKnownnPasta/bloodbank-proj-SQL.git
 ```
 
 # Functionality [^1]
@@ -32,19 +32,26 @@ Admin/User independent pages
     - Detailed view of profile
 
 # 🖼 Gallery
-### Greeting:
-![Login Screen](blob/ss-5.png)
-
-### Sign up screen:
-![Sign up Screen](blob/ss-2.png)
-![Login Screen](blob/ss-1.png)
-
-### User Panel: [^2]
-![Main](blob/ss-4.png)
-
-### Main Admin Page: [^2]
-![Profile](blob/ss-3.png)
-
+## First user welcome:
+![Welcome Screen](blob/s1.png)
+### User View:
+![User view](blob/s2.png)
+### User View: Donating blood
+![Donating](blob/s3.png)
+### User View: Requesting blood
+![Requesting](blob/s4.png)
+## Admin Login:
+![Admin login](blob/s5.png)
+## Admin View:
+![Admin page](blob/s6.png)
+### Admin View: Menu
+![Menu](blob/s7.png)
+### Admin View: 1: Donating blood (to hospitals)
+![Donation](blob/s8.png)
+### Admin View: 2: Checking blood reserves
+![Blood table](blob/s9.png)
+### Admin View: Profile
+![Profile](blob/s10.png)
 
 
 [^1]: This project is subject to have drastic changes in code and looks, it's never finalised. why is this a note? why not

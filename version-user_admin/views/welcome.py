@@ -150,4 +150,3 @@ def welcome_screen(src):
                           command= lambda: log_out(src), borderwidth=1, highlightcolor='black',
                           font=('Calibri Light', 12), activeforeground='white', height=1)
     switch_label.place(x=350, y=450)
-    log_out(src)

@@ -4,6 +4,11 @@ from __main__ import cursor, connection
 from tkinter import messagebox
 
 def table_data(frame, x):
+    for i in list(frame.__dict__['children'].values()):
+        if isinstance(i, Label):
+            if not i['text'].startswith('|'): i.destroy()
+        else: i.destroy()
+
     records_f = "|{:^15}|{:^15}|\n"
     title_f = "+{:^15}+{:^15}+\n"
 

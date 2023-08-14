@@ -59,6 +59,7 @@ def main_info_frame(ctrl, img):
     display_info(infoFrame, 'BLOOD TYPE', data[4], 280, 160, 280, 170)
 
     # ----------------- Right Side
+    global hospitalFrame
     hospitalFrame = Frame(ctrl, bg='#7B1818', width=475, height=425)
     hospitalFrame.place(x=455, y=65)
 
@@ -66,7 +67,7 @@ def main_info_frame(ctrl, img):
     hplbl.place(x=10, y=15)
 
     def reset():
-        global b1, b2
+        global b1, b2, hospitalFrame
         for i in list(hospitalFrame.__dict__['children'].values()):
             if i['text'] != 'Request services': i.destroy()
 
@@ -75,67 +76,67 @@ def main_info_frame(ctrl, img):
     reset()
 
 
-# ---------- Functionality buttons
-def request():
-    global b1, b2
-    b1.destroy(); b2.destroy()
+    # ---------- Functionality buttons
+    def request():
+        global b1, b2, hosptialFrame
+        b1.destroy(); b2.destroy()
 
-    blood_qty_label = Label(hospitalFrame, text="Enter Quantity of Blood Required:", bg='#7B1818', font=('Josefin Sans', 17), fg='white')
-    blood_qty_label.place(x=20, y=80)
+        blood_qty_label = Label(hospitalFrame, text="Enter Quantity of Blood Required:", bg='#7B1818', font=('Josefin Sans', 17), fg='white')
+        blood_qty_label.place(x=20, y=80)
 
-    blood_qty_entry = create_entry(hospitalFrame, 350, 80, "", width=10)
+        blood_qty_entry = create_entry(hospitalFrame, 350, 80, "", width=10)
 
-    hospital_label = Label(hospitalFrame, text="Hospital:", bg='#7B1818', font=('Josefin Sans', 17), fg='white')
-    hospital_label.place(x=20, y=130)
+        hospital_label = Label(hospitalFrame, text="Hospital:", bg='#7B1818', font=('Josefin Sans', 17), fg='white')
+        hospital_label.place(x=20, y=130)
 
-    hospitals = ['Hospital A', 'Hospital B', 'Hospital C']  # Replace with actual hospital names
-    selected_hospital = StringVar()
-    hospital_combobox = ttk.Combobox(hospitalFrame, textvariable=selected_hospital, values=hospitals, state="readonly")
-    hospital_combobox.place(x=120, y=145)
+        hospitals = ['Hospital A', 'Hospital B', 'Hospital C']  # Replace with actual hospital names
+        selected_hospital = StringVar()
+        hospital_combobox = ttk.Combobox(hospitalFrame, textvariable=selected_hospital, values=hospitals, state="readonly")
+        hospital_combobox.place(x=120, y=145)
 
-    pref_date_label = Label(hospitalFrame, text="Preferred Date of Appointment:", bg='#7B1818', font=('Josefin Sans', 17), fg='white')
-    pref_date_label.place(x=20, y=180)
-    pref_date_entry = create_entry(hospitalFrame, 20, 230, "")
+        pref_date_label = Label(hospitalFrame, text="Preferred Date of Appointment:", bg='#7B1818', font=('Josefin Sans', 17), fg='white')
+        pref_date_label.place(x=20, y=180)
+        pref_date_entry = create_entry(hospitalFrame, 20, 230, "")
 
-    def validate_info():
-        if '' not in [selected_hospital.get().strip(), blood_qty_entry.get().strip(), pref_date_entry.get().strip()]:
-            messagebox.showinfo('Successful', f'Arranged a appointment in {selected_hospital.get().title()}!')
-            reset()
-        else: messagebox.showerror('Error', 'Choose all required options')
-    
-    create_button(hospitalFrame, "Request", 100, 310, command=lambda:validate_info())
-    create_button(hospitalFrame, "Back", 260, 310, command=reset)
+        def validate_info():
+            if '' not in [selected_hospital.get().strip(), blood_qty_entry.get().strip(), pref_date_entry.get().strip()]:
+                messagebox.showinfo('Successful', f'Arranged a appointment in {selected_hospital.get().title()}!')
+                reset()
+            else: messagebox.showerror('Error', 'Choose all required options')
+        
+        create_button(hospitalFrame, "Request", 100, 310, command=lambda:validate_info())
+        create_button(hospitalFrame, "Back", 260, 310, command=lambda: reset())
 
 
-def appoint():
-    global b1, b2
-    b1.destroy(); b2.destroy()
+    def appoint():
+        global b1, b2
+        b1.destroy(); b2.destroy()
 
-    hospital_label = Label(hospitalFrame, text="Hospital:", bg='#7B1818', font=('Josefin Sans', 17), fg='white')
-    hospital_label.place(x=20, y=65)
+        hospital_label = Label(hospitalFrame, text="Hospital:", bg='#7B1818', font=('Josefin Sans', 17), fg='white')
+        hospital_label.place(x=20, y=65)
 
-    hospitals = ['Hospital A', 'Hospital B', 'Hospital C']  # Replace with actual hospital names
-    selected_hospital = StringVar()
-    hospital_combobox = ttk.Combobox(hospitalFrame, textvariable=selected_hospital, values=hospitals, state="readonly")
-    hospital_combobox.place(x=120, y=80)
+        hospitals = ['Hospital A', 'Hospital B', 'Hospital C']  # Replace with actual hospital names
+        selected_hospital = StringVar()
+        hospital_combobox = ttk.Combobox(hospitalFrame, textvariable=selected_hospital, values=hospitals, state="readonly")
+        hospital_combobox.place(x=120, y=80)
 
-    illness_label = Label(hospitalFrame, text="Info on any current/past illness:", bg='#7B1818', font=('Josefin Sans', 17), fg='white')
-    illness_label.place(x=20, y=100)
+        illness_label = Label(hospitalFrame, text="Info on any current/past illness:", bg='#7B1818', font=('Josefin Sans', 17), fg='white')
+        illness_label.place(x=20, y=100)
 
-    illness_entry = create_entry(hospitalFrame, 20, 150, "", width=67)
+        illness_entry = create_entry(hospitalFrame, 20, 150, "", width=67)
 
-    pref_date_label = Label(hospitalFrame, text="Preferred Date of Appointment:", bg='#7B1818', font=('Josefin Sans', 17), fg='white')
-    pref_date_label.place(x=20, y=210)
-    pref_date_entry = create_entry(hospitalFrame, 20, 260, "")
+        pref_date_label = Label(hospitalFrame, text="Preferred Date of Appointment:", bg='#7B1818', font=('Josefin Sans', 17), fg='white')
+        pref_date_label.place(x=20, y=210)
+        pref_date_entry = create_entry(hospitalFrame, 20, 260, "")
 
-    def validate_info():
-        if '' not in [selected_hospital.get().strip(), illness_entry.get().strip(), pref_date_entry.get().strip()]:
-            messagebox.showinfo('Successful', f'Arranged a appointment in {selected_hospital.get().title()}!')
-            reset()
-        else: messagebox.showerror('Error', 'Choose all required options')
-    
-    create_button(hospitalFrame, "Donate", 100, 350, command=lambda:validate_info())
-    create_button(hospitalFrame, "Back", 260, 350, command=reset)
+        def validate_info():
+            if '' not in [selected_hospital.get().strip(), illness_entry.get().strip(), pref_date_entry.get().strip()]:
+                messagebox.showinfo('Successful', f'Arranged a appointment in {selected_hospital.get().title()}!')
+                reset()
+            else: messagebox.showerror('Error', 'Choose all required options')
+        
+        create_button(hospitalFrame, "Donate", 100, 350, command=lambda:validate_info())
+        create_button(hospitalFrame, "Back", 260, 350, command=lambda: reset())
 
 
 
