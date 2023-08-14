@@ -12,7 +12,9 @@ create table if not exists Recipient (ID int(4) primary key, Name varchar(40), A
 --     Records:   ID, Date, Action
 
 insert into BloodTable values ('A', 0, '+'), ('A', 0, '-'), ('B', 0, '+'), ('B', 0, '-'), ('O', 0, '+'), ('O', 0, '-'), ('AB', 0, '+'), ('AB', 0, '-')
-insert into Hospital values (1010, 'Hospital Name', 'password', 'hospitalemail@gmail.com / 1233219', 366066)
+insert into Hospital values (1001, 'Hospital A', 'password', 'hospitalemail@gmail.com / 1233219', 366066)
+insert into Hospital values (1002, 'Hospital B', 'password', 'hospitalemail@gmail.com / 4234344', 345356)
+insert into Recipient values (2343, 'Ram', 34, 'M', 'O-', 0, 0)
 
 -- Old tables
 -- create table if not exists Donor (Name varchar(40), Age int(3), Gender char(20), BloodGroup char(2), HospitalID int(4), foreign key (HospitalID) references Hospital(HospitalID))

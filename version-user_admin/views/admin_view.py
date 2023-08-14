@@ -99,7 +99,6 @@ def main_frame_handle():
         xxx['text'] = '\n|   App Guide:\n\n1.     ≡ is to navigate the menu\n2.     Profile button is to update hosptial details'
 
     home_page()
-    side_bar(hosp_id)
 
 # ------------------------ Side Bar -------------------------
 
@@ -152,8 +151,6 @@ def side_bar(id):
 
             from views.welcome import welcome_screen
             welcome_screen(root)
-
-    menu_options(1)
 
 # ---------------------- Profile View ----------------------
 

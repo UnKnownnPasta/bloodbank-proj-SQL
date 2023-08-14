@@ -26,6 +26,8 @@ def donation_choice(src, ID, x):
     opt_1.place(x=110, y=150)
     opt_2.place(x=110, y=300)
 
+    opt_2.invoke()
+
 # ------- Option: 1
 def donate_blood_citizen(src, tt):
     tt['text'] = '|    Arranging Appointment'
@@ -35,8 +37,12 @@ def donate_blood_citizen(src, tt):
 def donate_blood_hospital(src, tt):
     tt['text'] = '|    Transferring Blood'
     
+    lx = Label(src, text='Select the following;', font=('Josefin Sans', 18))
+    lx.place(x=40, y=100)
+
+
     lbl_1 = Label(src, text='Choose a hospital:', font=('Josefin Sans', 18))
-    lbl_1.place(x=40, y=90)
+    lbl_1.place(x=40, y=170)
     hosp_options, hosp_sval = [], StringVar(value='None')
 
     cursor.execute('select HospitalName, HospitalID from Hospital;')
@@ -47,12 +53,12 @@ def donate_blood_hospital(src, tt):
     else:
         hosp_options.append('')
     hosp_menu = OptionMenu(src, hosp_sval, *hosp_options)
-    hosp_menu.place(x=230, y=100)
+    hosp_menu.place(x=230, y=180)
 
 
     lbl_2 = Label(src, text='Select Blood Type(s):', font=('Josefin Sans', 18))
-    lbl_2.place(x=40, y=150)
-    global totalList, selected
+    lbl_2.place(x=40, y=230)
+    global totalList, selected, display_label
 
     totalList = """"""
     display_label = Label(src, text=totalList, font=('Josefin Sans', 14), bg='#FBFCF8', padx=100, width=10, height=10, anchor='n')
@@ -65,12 +71,15 @@ def donate_blood_hospital(src, tt):
         selected.append(vv)
         display_label.config(text=totalList)  # Update the display_label text
 
-    def reset_selected(): display_label.config(text="")  # Update the display_label text
+    def reset_selected(): 
+        global selected, display_label, totalList
+        display_label.config(text="")  # Update the display_label text
+        selected.clear(); totalList = """"""
 
     blood_options = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']
     blood_sval = StringVar(value='        ')
     blood_menu = OptionMenu(src, blood_sval, *blood_options)
-    blood_menu.place(x=260, y=160)
+    blood_menu.place(x=260, y=240)
 
     # Clear the menu items first
     blood_menu['menu'].delete(0, 'end')
@@ -78,13 +87,19 @@ def donate_blood_hospital(src, tt):
     for option in blood_options:
         blood_menu['menu'].add_command(label=option, command=lambda v=option: option_selected(v))
 
-    proceed = Button(src, text='Proceed with donation (Update record)', command=lambda: finish(src),
+    proceed = Button(src, text='Proceed with donation', command=lambda: finish(src),
         bd=0, activebackground='#D22B2B', bg='#EE4B2B', relief="flat", font=('Cascadia Code', 15))
-    proceed.place(x=40, y=300)
+    proceed.place(x=40, y=353)
+
+    reset = Button(src, text='Reset Selections', command=lambda: reset_selected(),
+        bd=0, activebackground='#D22B2B', bg='#EE4B2B', relief="flat", font=('Cascadia Code', 15))
+    reset.place(x=340, y=353)
 
     def finish(ctrl):
         global selected, id
         status = 0
+
+        if hosp_sval.get() == '' or blood_sval.get() == '': messagebox.showerror('Error', 'Need to fill out all required fields')
 
         for i in selected:
             cursor.execute('select Units from bloodtable where concat(BloodType, RhFactor) = "%s"'%(i,))
