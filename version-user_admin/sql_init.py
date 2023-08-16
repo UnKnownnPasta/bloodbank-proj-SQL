@@ -10,7 +10,7 @@ def init():
         con = sql.connect(
             host='localhost', user='root', password=MYSQL_PASSWORD)
         cur = con.cursor()
-    except Exception as e:
+    except:
         messagebox.showerror('Error', 'MYSQL failed to start')
         exit()
 

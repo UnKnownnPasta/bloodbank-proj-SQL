@@ -46,74 +46,69 @@ def display_error():
     count += 1
     canvas.itemconfigure(error_text, fill='white', text=f'Invalid Login Details. [{count}]')
 
+
 def validate(hospname, usrname, r):
-    global entries
     from views.user_view import user_window
     from __main__ import cursor, connection
 
-    if hospname == 'a' and usrname == 'a':
-        hospname = 'Hospital'
-        usrname = 'User'
-    else:
-        for value in [hospname, usrname]:
-            if len(value.strip()) == 0 or value in ['Hospital Name', 'Your Name'] or value.isdigit():
-                display_error()
-                return
+    if any(len(value.strip()) == 0 or value in ['Hospital Name', 'Your Name'] or value.isdigit() for value in [hospname, usrname]):
+        display_error()
+        return
 
-        cursor.execute("SELECT COUNT(*) FROM hospital WHERE HospitalName='%s'"%(hospname,))
-        if cursor.fetchone()[0] == 0:
-            display_error()
-            return
+    cursor.execute(f"SELECT COUNT(*) FROM hospital WHERE HospitalName='{hospname}'")
+    data = cursor.fetchone()[0]
+    if data == 0: display_error(); return
 
-        cursor.execute(f'select count(*) from recipient where Name="{usrname}"')
-        if cursor.fetchone()[0] == 0:
-            global entries
-            popup = Toplevel(r)
-            popup.geometry(f'250x130+{int(x_coordinate)+200}+{int(y_coordinate)+100}')
-            
-            entries = []
-            current_step = 0
-        
-            def create_entry_popup(text):
-                nonlocal current_step
-                if entries:
-                    for w in list(popup.__dict__['children'].values()):
-                        if not isinstance(w, Entry): w.destroy()
-                    entries[-1].pack_forget()  # Hide the previous entry
-                
-                lbl = Label(popup, text=text)
-                lbl.pack()
-                entry = create_entry(popup, 0, 20, '')
-                entry.pack()
-                entries.append(entry)
-                submit_button = create_button(popup, "Submit", 0, 50, command=lambda: process_entry())
-                submit_button.pack()
-                current_step += 1
-            
-            def process_entry():
-                global entries
-                nonlocal current_step
-                values = [entry.get() for entry in entries]
-                if current_step < 3:
-                    create_entry_popup(["Enter your Age:", "Enter your Sex:", "Enter your Blood Type:"][current_step])
-                else:
-                    cursor.execute(f'insert into recipient values ({random.randint(1000, 9999)}, "{usrname}", {int(entries[0].get())}, "{entries[1].get()}", "{entries[2].get()}", 0, 0)')
-                    connection.commit()
+    cursor.execute(f"SELECT COUNT(*) FROM recipient WHERE Name='{usrname}'")
+    data = cursor.fetchone()[0]
+    print(data)
+    if data == 0: open_entry_popup(r=r, cr=cursor, cn=connection, un=usrname, hn=hospname); return
 
-                    for widget in list(r.__dict__['children'].values()):
-                        try: widget.destroy()
-                        except: pass
+    for widget in list(r.__dict__['children'].values()):
+        try: widget.destroy()
+        except: pass
 
-                    user_window(hospname, usrname, r, images)
-                    popup.destroy()
-                
-            process_entry()
+    user_window(hospname, usrname, r, images)
+
+
+def open_entry_popup(r, cr, cn, un, hn):
+    global entries, images
+
+    popup = Toplevel(r)
+    popup.geometry(f'250x130+{int(x_coordinate)+200}+{int(y_coordinate)+100}')
+
+    entries = []
+
+    def create_entry_popup(text):
+        for w in popup.winfo_children():
+            w.destroy()
+
+        lbl = Label(popup, text=text); lbl.pack()
+        entry = create_entry(popup, 0, 20, ''); entry.pack()
+        submit_button = create_button(popup, "Submit", 0, 50, command=lambda:(entries.append(entry.get()), process_entry()))
+        submit_button.pack()
+
+    def process_entry():
+        if len(entries) < 3:
+            create_entry_popup(["Enter your Sex:", "Enter your Blood Type:"][len(entries)-1])
         else:
-            for widget in list(r.__dict__['children'].values()):
-                try: widget.destroy()
-                except: pass
+            cr.execute(
+                'INSERT INTO recipient VALUES (%s, %s, %s, %s, %s, 0, 0)',
+                (random.randint(1000, 9999), un, int(entries[0]), entries[1], entries[2])
+            )
+            cn.commit()
 
-            user_window(hospname, usrname, r, images)
+            for widget in r.winfo_children():
+                try:
+                    widget.destroy()
+                except:
+                    pass
+            
+            popup.destroy()
+            from views.user_view import user_window
+            user_window(hn, un, r, images)
+
+    create_entry_popup("Enter your Age:")
 
 
 

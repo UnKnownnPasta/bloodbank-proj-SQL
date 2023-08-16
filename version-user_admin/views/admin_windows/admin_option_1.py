@@ -1,7 +1,8 @@
 from tkinter import *
 from tkinter import messagebox
 from __main__ import connection, cursor
-from utils import create_images
+from utils import create_images, create_entry, create_button
+from random import randint
 images = create_images()
 
 def destroy_frameitems(frame):
@@ -26,11 +27,35 @@ def donation_choice(src, ID, x):
     opt_1.place(x=110, y=150)
     opt_2.place(x=110, y=300)
 
-    opt_2.invoke()
-
 # ------- Option: 1
 def donate_blood_citizen(src, tt):
     tt['text'] = '|    Arranging Appointment'
+
+    def make_lbl_entry(ctrl, txt, x1, y1, x2, y2, w) -> Entry:
+        nm = create_entry(src, x1, y1, '', width=w)
+        lbl = Label(src, text=txt, font=('Josefin Sans', 18))
+        lbl.place(x=x2, y=y2)
+        return nm
+    
+    e_1 = make_lbl_entry(src, 'Enter name of person:', 270, 100, 40, 100, 60)
+    e_2 = make_lbl_entry(src, 'Gender:', 130, 165, 40, 165, 9)
+    e_3 = make_lbl_entry(src, 'Age:', 310, 165, 245, 165, 9)
+    e_4 = make_lbl_entry(src, 'Blood Group Required:', 270, 240, 40, 240, 9)
+
+    create_button(src, 'Appoint', 60, 340, command=lambda: validate())
+
+    def validate():
+        def val(strings: list[str]):
+            allowed_characters = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 +-")
+            return all(char in allowed_characters for char in strings)
+
+        if False in {val(e_1.get()), val(e_2.get()), val(e_3.get()), val(e_4.get())}:
+            messagebox.showerror('Error', 'All fields are not properly filled out.')
+        else:
+            try: cursor.execute(f"insert into recipient values ({randint(1000, 9999)}, '{e_1.get()}', '{e_3.get()}', '{e_2.get()}', '{e_4.get()}', 0, 0)")
+            except: messagebox.showerror('Error', 'Failed to appoint user; Verify user details'); connection.rollback()
+            connection.commit()
+            destroy_frameitems(src); donation_choice(src=src, ID=id, x=tt)
 
 
 # ------- Option: 2

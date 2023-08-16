@@ -119,8 +119,8 @@ def side_bar(id):
     }
     create_button(home_bar, '⦿    Donate/Recieve\nBlood', 16, 30, **optionLooks, command= lambda: menu_options(1))
     create_button(home_bar, '⦿    See Blood Bank', 16, 100, **optionLooks, command= lambda: menu_options(2))
-    create_button(home_bar, '⦿    Add User', 16, 170, **optionLooks, command= lambda: menu_options(3))
-    create_button(home_bar, 'EXIT', 10, 380, **optionLooks, command= lambda: menu_options(4))
+    # create_button(home_bar, '⦿    Add User', 16, 170, **optionLooks, command= lambda: menu_options(3))
+    create_button(home_bar, 'EXIT', 10, 380, **optionLooks, command= lambda: menu_options(3))
 
     def dropFrame(txt):
         global active
@@ -141,16 +141,11 @@ def side_bar(id):
             table_data(visible_frame, ttl)
 
         elif c == 3:
-            dropFrame('    Now Managing Users    ')
-            ttl['text'] = '|    Managing User Database'
-            from views.admin_windows.admin_option_3 import abc
-            abc()
-
-        elif c == 4:
             for widget in list(root.__dict__['children'].values()): widget.destroy()
 
             from views.welcome import welcome_screen
             welcome_screen(root)
+
 
 # ---------------------- Profile View ----------------------
 
