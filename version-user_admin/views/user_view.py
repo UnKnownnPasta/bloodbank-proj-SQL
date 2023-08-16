@@ -34,7 +34,7 @@ def display_info(frame, text1, text2, x1, y1, x2, y2, ):
 
 # -------------- Left and right side of page
 def main_info_frame(ctrl, img):
-    global cur, USER, b1, b2
+    global cur, USER, b1, b2, data
 
     # ----------------- Left Side
     infoFrame = Frame(ctrl, bg='#7B1818', width=435, height=425)
@@ -78,7 +78,7 @@ def main_info_frame(ctrl, img):
 
     # ---------- Functionality buttons
     def request():
-        global b1, b2, hosptialFrame
+        global b1, b2, hosptialFrame, data
         b1.destroy(); b2.destroy()
 
         blood_qty_label = Label(hospitalFrame, text="Enter Quantity of Blood Required:", bg='#7B1818', font=('Josefin Sans', 17), fg='white')
@@ -109,7 +109,7 @@ def main_info_frame(ctrl, img):
 
 
     def appoint():
-        global b1, b2
+        global b1, b2, cur, con
         b1.destroy(); b2.destroy()
 
         hospital_label = Label(hospitalFrame, text="Hospital:", bg='#7B1818', font=('Josefin Sans', 17), fg='white')
@@ -132,6 +132,8 @@ def main_info_frame(ctrl, img):
         def validate_info():
             if '' not in [selected_hospital.get().strip(), illness_entry.get().strip(), pref_date_entry.get().strip()]:
                 messagebox.showinfo('Successful', f'Arranged a appointment in {selected_hospital.get().title()}!')
+                cur.execute(f'update bloodtable set Units = Units+1 where concat(BloodType, RhFactor)="{data[4]}"')
+                con.commit()
                 reset()
             else: messagebox.showerror('Error', 'Choose all required options')
         
@@ -146,9 +148,9 @@ def user_window(hosp, usr, root, img):
     HOPSITAL, USER = hosp, usr
     root.configure(bg='#710302')
 
-    from __main__ import cursor
-    global cur
-    cur = cursor
+    from __main__ import cursor, connection
+    global cur, con
+    cur, con = cursor, connection
 
     # Create top frame
     top_frame(root, img)
