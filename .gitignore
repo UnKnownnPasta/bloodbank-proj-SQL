@@ -1,9 +1,8 @@
-/src
-versions/*
-!versions/v1
-!versions/v2
+versions/_
+versions/v3-revised
+
 __pycache__
 *.zip
+
 v3-revised/_old
 filedump
-blob/old
