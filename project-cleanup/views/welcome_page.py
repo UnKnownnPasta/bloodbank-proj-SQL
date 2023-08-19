@@ -54,11 +54,11 @@ def display_error():
     canvas.itemconfigure(error_text, fill='white', text=f'Invalid Login Details. [{error_count} Attempts]')
 
 
-def log_out(control):
+def admin_access(control):
     # Remove normal login page
     wipe_page(control)
     # Switch to admin login page
-    from views.admin_login import admin_login
+    from views.access_admin_page import admin_login
     admin_login(control)
 
 #              ------------------- Sql Handling Functions ----------------------              
@@ -82,7 +82,7 @@ def validate_inputs(hospname: str, usrname: str, control):
         # If it does, register the citizen
         register_user(control, usrname, hospname); return
 
-    from views.user_view import user_window
+    from views.user_page import user_window
 
     # Remove login screen, switch to user view
     wipe_page(control)
@@ -127,9 +127,10 @@ def register_user(source, user, hopsital):
             connection.commit()
 
             sub_root_window.destroy()
-            from views.user_view import user_window
+            from views.user_page import user_window
             user_window(hopsital, user, source, images)
 
+    # Ask the first question
     create_entry_popup("Enter your Age:")
 
 
@@ -146,6 +147,7 @@ def welcome_screen(source):
     global temp_button
     temp_button = create_button(source, " ", 310, 250, command=lambda: display_entries(source, images), image=images[2])
 
+    # Welcome Text + Icon
     canvas.create_text(377, 85, text='Welcome!!', font=('Hello Sunday', 56), anchor="nw", fill='#303030')
     canvas.create_text(380, 85, text='Welcome!!', font=('Hello Sunday', 55), anchor="nw", fill="#D22B2B")
     canvas.create_image(290, 70, image=images[6], anchor='nw')
@@ -155,5 +157,5 @@ def welcome_screen(source):
     # Button to switch to admin login page
     create_button(source, 'OR, LOGIN AS A ADMIN', 350, 450, padx=30, pady=0,
                   relief="solid", activebackground='#D22B2B', bg='#D22B2B', fg='white',
-                  command= lambda: log_out(source), borderwidth=1, highlightcolor='black',
+                  command= lambda: admin_access(source), borderwidth=1, highlightcolor='black',
                   font=('Calibri Light', 12), activeforeground='white', height=1)
