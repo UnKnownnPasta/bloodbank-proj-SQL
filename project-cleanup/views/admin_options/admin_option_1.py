@@ -62,8 +62,7 @@ def donate_blood_citizen(src, tt):
         cursor.execute(f"insert into recipient values ({randint(1000, 9999)}, '{e_1.get()}', '{e_3.get()}', '{e_2.get()}', '{e_4.get()}', 0, 0)")
         connection.commit()
         messagebox.showinfo('Success', f'Successfully set up donation request for {e_1.get()}! Required: {e_4.get().upper()}')
-        destroy_frameitems(src)
-        donation_choice(src=src, ID=id, x=tt)
+        donation_choice(src=src, ID=Admin_ID, x=tt)
 
 
 
@@ -83,7 +82,7 @@ def donate_blood_hospital(src, tt):
     data = cursor.fetchall()
     if data != None:
         for row in data:
-            hosp_options.append(row[0].title()) if row[1] != id else None
+            hosp_options.append(row[0].title()) if row[1] != Admin_ID else None
     else:
         hosp_options.append('')
     hosp_menu = OptionMenu(src, hosp_sval, *hosp_options)
