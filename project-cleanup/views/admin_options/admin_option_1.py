@@ -57,7 +57,7 @@ def donate_blood_citizen(src, tt):
         if e_2.get().lower() not in ['male', 'female', 'm', 'f']: messagebox.showerror('Error', 'Enter a proper gender (M or F)'); return
         elif not e_3.get().isdigit(): messagebox.showerror('Error', 'Enter a valid age'); return
         elif int(e_3.get()) > 100: messagebox.showerror('Error', 'Enter a valid age'); return
-        elif e_4.get().lower()[0] not in ['a', 'b', 'o'] or e_4.get()[-1] not in ['-', '+']: messagebox.showerror('Error', 'Enter a valid Bloodtype'); return
+        elif e_4.get().lower()[:-1] not in ['a', 'b', 'o', 'ab'] or e_4.get()[-1] not in ['-', '+']: messagebox.showerror('Error', 'Enter a valid Bloodtype'); return
 
         cursor.execute(f"insert into recipient values ({randint(1000, 9999)}, '{e_1.get()}', '{e_3.get()}', '{e_2.get()}', '{e_4.get()}', 0, 0)")
         connection.commit()
@@ -66,7 +66,9 @@ def donate_blood_citizen(src, tt):
         donation_choice(src=src, ID=id, x=tt)
 
 
+
 #                --------------------- Option choice: 2 ----------------------              
+
 def donate_blood_hospital(src, tt):
     global Admin_ID
     tt['text'] = '|    Transferring Blood'
@@ -133,7 +135,7 @@ def donate_blood_hospital(src, tt):
 
     # ---- Function to validate the donation
     def finish(ctrl):
-        global selected, id
+        global selected, Admin_ID
 
         if hosp_sval.get() == 'None' or len(selected) == 0:
             messagebox.showerror('Error', 'Select all options'); return
@@ -149,7 +151,7 @@ def donate_blood_hospital(src, tt):
         else:
             connection.commit()
 
-            cursor.execute('select HospitalName, HospitalID from hospital where HospitalID = %s'%(id))
+            cursor.execute(f'select HospitalName, HospitalID from hospital where HospitalID = {Admin_ID}')
             data = cursor.fetchone()
 
             messagebox.showinfo('Success', f'Successfully donated {len(selected)} units of blood to {hosp_sval.get()}!')

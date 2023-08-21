@@ -30,4 +30,4 @@ def table_data(frame, x):
     
     update_text()
 
-    create_label(frame, "* 1 Unit = 1 pint = 450 mL", 200, 300)
+    create_label(frame, "* 1 Unit = 1 pint = 450 mL", 400, 400, font=('Josefins Sans', 14))
