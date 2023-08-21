@@ -1,5 +1,5 @@
 from tkinter import *
-from utils import create_button, create_entry
+from utils import create_button, create_entry, create_label
 from __main__ import cursor, connection
 from tkinter import messagebox
 
@@ -29,3 +29,5 @@ def table_data(frame, x):
         data_label['text'] = infos
     
     update_text()
+
+    create_label(frame, "* 1 Unit = 1 pint = 450 mL", 200, 300)

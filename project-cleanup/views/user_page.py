@@ -8,6 +8,7 @@ from tkinter import *
 from tkinter import font, ttk, messagebox
 from utils import create_button, create_entry, wipe_page, create_label
 from __main__ import cursor, connection
+from datetime import datetime
 
 images = {}
 
@@ -38,8 +39,8 @@ def create_dropdown(options: list, x, y):
     combobox.place(x=x, y=y)
     return string_data
 
-def update_bloodbank(type):
-    cursor.execute(f'update bloodtable set Units = Units+1 where concat(BloodType, RhFactor)="{type}"')
+def update_bloodbank(type, quantity):
+    cursor.execute(f'update bloodtable set Units = Units+{int(quantity)} where concat(BloodType, RhFactor)="{type}"')
     connection.commit()
 
 
@@ -98,7 +99,7 @@ def option_1_request():
 
     # User Input: 2
     create_label(hospitalFrame, "Hospital:", 20, 130, bg='#7B1818', font=('Josefin Sans', 17), fg='white')
-    cursor.execute('SELECT HospitalName FROM hospital;')
+    cursor.execute(f'SELECT HospitalName FROM hospital')
     name_list = cursor.fetchall()
     hospitals = []
     for name in name_list:
@@ -114,7 +115,7 @@ def option_1_request():
     create_button(hospitalFrame, "Back", 260, 310, command=lambda: show_options())
 
     def validate_info():
-        date_text = date_entry.get().strip().replace(' ', '')
+        date_text = date_entry.get().replace(' ', '')
 
         if not blood_qty_entry.get().isdigit() or blood_qty_entry.get().isspace():
             messagebox.showerror('Error', "Didn't specify blood quantity.")
@@ -123,18 +124,13 @@ def option_1_request():
             messagebox.showerror('Error', 'Select a hospital for a appointment.')
 
         elif len(date_text) != 0 or date_text.replace('/', '').isdigit():
-            if date_text.count('/') != 2: messagebox.showerror('Error', 'Invalid Date format.'); return
             try:
-                t = '{:2}/{:2}/{:4}'
-                dates = date_text.split('/')
-                date_format = t.format(dates[0], dates[1], dates[2])
-            except:
+                datee = datetime.strptime(date_text, "%d/%m/%Y")
+                update_bloodbank(data[4], blood_qty_entry.get())
+                messagebox.showinfo('Success', f"Requested a appointment in {selected_hospital.get()}! It'll be around {datee.date()}")
+                show_options()
+            except ValueError:
                 messagebox.showerror('Error', 'Invalid Date format.'); return
-            else:
-                if date_format.count(' ') == 0:
-                    messagebox.showinfo('Success', f"Requested a appointment in {selected_hospital.get()}! It'll be around {date_text}")
-                    show_options()
-                else: messagebox.showerror('Error', 'Invalid Date format.'); return
         else:
             messagebox.showerror('Error', 'Invalid Date format.'); return
 
@@ -175,19 +171,12 @@ def option_2_appoint():
             messagebox.showerror('Error', 'Please mention any past illness or medical condition(s)')
         
         elif len(date_text) != 0 or date_text.replace('/', '').isdigit():
-            if date_text.count('/') != 2: messagebox.showerror('Error', 'Invalid Date format.'); return
             try:
-                t = '{:2}/{:2}/{:4}'
-                dates = date_text.split('/')
-                date_format = t.format(dates[0], dates[1], dates[2])
-            except:
+                datee = datetime.strptime(date_text, "%d/%m/%Y")
+                messagebox.showinfo('Success', f"Successfully set a appointment in {selected_hospital.get()}, on {date_text}!")
+                show_options()
+            except ValueError:
                 messagebox.showerror('Error', 'Invalid Date format.'); return
-            else:
-                if date_format.count(' ') == 0:
-                    update_bloodbank(data[4])
-                    messagebox.showinfo('Success', f"Successfully set a appointment in {selected_hospital.get()}, on {date_text}!")
-                    show_options()
-                else: messagebox.showerror('Error', 'Invalid Date format.'); return
         else:
             messagebox.showerror('Error', 'Invalid Date format.'); return
 

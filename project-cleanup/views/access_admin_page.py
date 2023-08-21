@@ -7,7 +7,9 @@ from utils import create_button, create_entry, create_images, wipe_page
 
 globalImages = create_images()
 
+
 #               ------------------- Preliminary Functions ----------------------              
+
 def setText(entry, defaultText):
     if entry.get().strip() == defaultText:
         entry.delete(0, "end")
@@ -22,7 +24,9 @@ def custom_entry(control, x, y, text):
     entry.bind('<FocusOut>', lambda event: restoreText(entry, text))
     return entry
 
+
 #               ------------------ Page Handling Functions ----------------------              
+
 def make_canvas(control):
     canvas = Canvas(control, width='940', height='500', highlightthickness=0)
     # Add Background
@@ -30,7 +34,7 @@ def make_canvas(control):
     canvas.pack(side="top", fill="both", expand=True)
     return canvas
 
-def validate_cred(control, admin_user: str, admin_pass: str):
+def validate_cred(control, admin_user, admin_pass):
     for i in [admin_user, admin_pass]:
         if i == 'User Name' or i == 'Password' or len(i.strip()) == 0 or i.isdigit():
             messagebox.showerror('Error', 'Invalid login details'); return
@@ -46,7 +50,9 @@ def validate_cred(control, admin_user: str, admin_pass: str):
     from views.admin_page import admin_login
     admin_login(admin_user, admin_pass, hospital_ID, pincode, control)
 
+
 #               ----------------------- Login Page Code ----------------------              
+
 def admin_login(root):
     login_canvas = make_canvas(root)
 
@@ -59,8 +65,10 @@ def admin_login(root):
     login_canvas.create_text(240, 200, text='Fill in details to gain access', font=('Josefin Sans', 14), **label_look)
 
     # Input 1
-    user_name = custom_entry(root, 240, 260, 'User Name')
+    user_name = custom_entry(root, 240, 260, 'Hospital Name')
     # Input 2
     user_pass = custom_entry(root, 240, 320, 'Password')
     # Login Button
-    create_button(root, 'Login', 410, 380, command= lambda: validate_cred(root, user_name.get(), user_pass.get()))
+    from views.welcome_page import welcome_screen
+    create_button(root, 'Login', 345, 380, command= lambda: validate_cred(root, user_name.get(), user_pass.get()))
+    create_button(root, 'Back', 465, 380, command= lambda: (wipe_page(root), welcome_screen(root)))

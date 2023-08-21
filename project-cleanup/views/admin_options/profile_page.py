@@ -32,16 +32,18 @@ def sub_profile_view():
 
     pinEntry = create_entry(topRoot, -200, -180, '')
 
-    def place_at_negative(widget_list: list):
+    # Functions to place widgets in and out of view
+    def place_at_negative(widget_list): # Out of view
         for widget in widget_list:
             widget.place(x=-50, y=-50)
 
-    def place_widgets(widget_list: list):
+    def place_widgets(widget_list): # Into view
         for widget in widget_list:
             widget[0].place(x=widget[1][0], y=widget[1][1])
 
     place_at_negative([editBtn_stop, editBtn_save])
 
+    # Functions to handle: (1) When user click edit (2) When user clicks stop editing (3) When user saves their edit
     def edit_profile():
         place_widgets([[pinEntry, [200, 180]], [editBtn_stop, [60, 300]], [editBtn_save, [240, 300]]])
         place_at_negative([editBtn])
@@ -63,6 +65,7 @@ def sub_profile_view():
         stop_profile_edit()
 
 
+# A function to make profile window invisible
 def DEL_EVENT():
     global topRoot, profCanvas
     topRoot.withdraw()

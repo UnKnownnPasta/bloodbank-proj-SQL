@@ -2,8 +2,14 @@ from tkinter import *
 from tkinter import messagebox
 from __main__ import connection, cursor
 from utils import create_images, create_entry, create_button, create_label
+
+
+# ----------------------------------- Admin Menu Handling -------------------------------------
+
 from random import randint
 images = create_images()
+
+#               ------------------- Preliminary Functions ----------------------              
 
 def destroy_frameitems(frame):
     for i in list(frame.__dict__['children'].values()):
@@ -12,8 +18,8 @@ def destroy_frameitems(frame):
         else: i.destroy()
 
 def donation_choice(src, ID, x):
-    global id
-    id = ID
+    global Admin_ID
+    Admin_ID = ID
     destroy_frameitems(src)
 
     create_label(src, 'Arrange donation for a person:', 40, 90, font=('Cascadia Code', 19))
@@ -25,13 +31,13 @@ def donation_choice(src, ID, x):
             bd=0, activebackground='#D22B2B', bg='#EE4B2B', relief="flat", padx=130, pady=8, fg='white', font=('Cascadia Code', 15))
 
 
+# -------------------------------- Option Selection Handling ----------------------------------
+#                --------------------- Option choice: 1 ----------------------              
 
-
-# -------------- Option: 1
 def donate_blood_citizen(src, tt):
     tt['text'] = '|    Arranging Appointment'
 
-    def make_lbl_entry(ctrl, text, x1, y1, x2, y2, w) -> Entry:
+    def make_lbl_entry(ctrl, text, x1, y1, x2, y2, w):
         nm = create_entry(src, x1, y1, '', width=w)
         lbl = create_label(src, text, x2, y2, font=('Josefin Sans', 18))
         return nm
@@ -59,8 +65,10 @@ def donate_blood_citizen(src, tt):
         destroy_frameitems(src)
         donation_choice(src=src, ID=id, x=tt)
 
-# -------------- Option: 2
+
+#                --------------------- Option choice: 2 ----------------------              
 def donate_blood_hospital(src, tt):
+    global Admin_ID
     tt['text'] = '|    Transferring Blood'
     lx = create_label(src, 'Select the following;', 30, 100, font=('Josefin Sans', 18))
 
@@ -69,7 +77,7 @@ def donate_blood_hospital(src, tt):
     lbl_1 = create_label(src, 'Choose a hospital:', 40, 170, font=('Josefin Sans', 18))
     hosp_options, hosp_sval = [], StringVar(value='None')
 
-    cursor.execute('select HospitalName, HospitalID from Hospital;')
+    cursor.execute(f'select HospitalName, HospitalID from Hospital where HospitalID != {Admin_ID}')
     data = cursor.fetchall()
     if data != None:
         for row in data:
@@ -78,7 +86,6 @@ def donate_blood_hospital(src, tt):
         hosp_options.append('')
     hosp_menu = OptionMenu(src, hosp_sval, *hosp_options)
     hosp_menu.place(x=230, y=180)
-
 
 
     # ---- For label showcasing selected blood types
@@ -103,7 +110,6 @@ def donate_blood_hospital(src, tt):
         update_display_label()
 
 
-
     # ---- For Blood Type(s) Dropdown
     lbl_2 = create_label(src, 'Select Blood Type(s):', 40, 230, font=('Josefin Sans', 18))
     blood_options = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']
@@ -115,7 +121,6 @@ def donate_blood_hospital(src, tt):
 
     for option in blood_options:
         blood_menu['menu'].add_command(label=option, command=lambda v=option: option_selected(v))
-
 
 
     # ---- Buttons
@@ -131,15 +136,13 @@ def donate_blood_hospital(src, tt):
         global selected, id
 
         if hosp_sval.get() == 'None' or len(selected) == 0:
-            messagebox.showerror('Error', 'Select all options')
-            return
+            messagebox.showerror('Error', 'Select all options'); return
 
         for i in selected:
             cursor.execute('select Units from bloodtable where concat(BloodType, RhFactor) = "%s"'%(i,))
 
             # If Quantity of that blood type is 0, exit the loop
-            if cursor.fetchone()[0] == 0:
-                break
+            if cursor.fetchone()[0] == 0: break
 
             query = f'update bloodtable set Units = Units - 1 where concat(BloodType, RhFactor) = "{i}"'
             cursor.execute(query)
@@ -158,3 +161,5 @@ def donate_blood_hospital(src, tt):
         messagebox.showerror('Error', 'Not enough storage of blood available')
         connection.rollback()
         return
+
+# ---------------------------------------------------------------------------------------------

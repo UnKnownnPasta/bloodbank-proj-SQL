@@ -17,9 +17,10 @@ def create_page(control):
     # Window for profile (Make and hide it)
     profileRoot = Toplevel(control)
     profileRoot.withdraw()
+    profileRoot.iconphoto(False, globalImages[6])
     profileRoot.protocol('WM_DELETE_WINDOW', DEL_EVENT)
 
-    # Make the info crawl at the top
+    # Make the info crawl (top black bar)
     scroll_texts = ["", 0]
     scrollbar = create_label(control, "", 0, 0, font=("Arial", 12), anchor=NE, bg="black", fg="white", width=104)
 
@@ -137,7 +138,7 @@ def side_bar(root):
         if c == 1:
             dropFrame('    Now Donating Blood    ')
             from views.admin_options.admin_option_1 import donation_choice
-            donation_choice(display_frame, id, current_view)
+            donation_choice(display_frame, admin_data["ID"], current_view)
             current_view['text'] = '|    Choose an option'
 
         elif c == 2:

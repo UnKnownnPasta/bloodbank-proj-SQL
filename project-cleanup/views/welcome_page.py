@@ -23,7 +23,7 @@ from random import randint
 
 def create_canvas(control, img):
     canvas = Canvas(control, width=940, height=500, highlightthickness=0)
-    canvas.pack(side="top", fill="both", expand=True)
+    canvas.pack()
     return canvas
 
 def bind_focus_events(widget, text):
@@ -46,13 +46,11 @@ def display_entries(control, img):
     user = create_entry(control, 240, 300, 'Your Name', width=70)
     bind_focus_events(user, 'Your Name')
 
-
 def display_error():
     global error_count, error_text, canvas
 
     error_count = error_count + 1
     canvas.itemconfigure(error_text, fill='white', text=f'Invalid Login Details. [{error_count} Attempts]')
-
 
 def admin_access(control):
     # Remove normal login page
@@ -61,9 +59,10 @@ def admin_access(control):
     from views.access_admin_page import admin_login
     admin_login(control)
 
+
 #              ------------------- Sql Handling Functions ----------------------              
 
-def validate_inputs(hospname: str, usrname: str, control):
+def validate_inputs(hospname, usrname, control):
     hospname, usrname = hospname.strip(), usrname.strip()
 
     if len(hospname) == 0 or len(usrname) == 0:
@@ -92,6 +91,7 @@ def validate_inputs(hospname: str, usrname: str, control):
 
 
 #             ------------------- Code for Registering User ----------------------              
+
 def register_user(source, user, hopsital):
     sub_root_window = Toplevel(source)
     sub_root_window.title('Info Frame')
@@ -110,9 +110,15 @@ def register_user(source, user, hopsital):
 
     def verify_details(entry):
         nonlocal value_list
-        if len(value_list) == 0 and not entry.get().isdigit() and entry.get() > '100': pass
+
+        if len(value_list) == 0:
+            try:
+                if int(entry.get()) < 100:
+                    value_list.append(entry.get()); process_entry()
+                else: pass
+            except ValueError: pass
         elif len(value_list) == 1 and (entry.get().lower() not in ['m', 'f', 'male', 'female']): pass
-        elif len(value_list) == 2 and (entry.get()[0] not in ['A', 'B', 'O']): pass
+        elif len(value_list) == 2 and ((entry.get()[:-1].upper() not in ['A', 'B', 'O', 'AB']) or (entry.get()[-1] not in ['-', '+'])): pass
         else:
             value_list.append(entry.get())
             process_entry()
@@ -129,6 +135,7 @@ def register_user(source, user, hopsital):
             connection.commit()
 
             sub_root_window.destroy()
+            wipe_page(source)
             from views.user_page import user_window
             user_window(hopsital, user, source, images)
 
