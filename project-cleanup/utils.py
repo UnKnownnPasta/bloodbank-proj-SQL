@@ -15,11 +15,9 @@ def wipe_page(source):
 
 # -- Function to verify given pin code
 def pinVerify(pin):
-    if isinstance(pin, str):
+    if pin[0] == '0' or len(pin) != 6:
         return False
-    elif str(pin)[0] == '0' or len(str(pin)) != 6:
-        return False
-    elif int(str(pin)[:2]) in [29, 35, 54, 55, 65, 66]:
+    elif int(pin[:2]) in [29, 35, 54, 55, 65, 66]:
         return False
     else: return True
 

@@ -77,11 +77,14 @@ def load_admin_view(control):
 
     # Add elements to the home bar at top (Hospital name, logo and button)
     menu_btn = Button(title_bar, **button_look, command= lambda: side_bar(control)).pack(side=LEFT)
-    logo_lbl = Label(title_bar, bg="#D22B2B", image=globalImages[5]).pack(side=LEFT, padx=10)
+    logo_lbl = Label(title_bar, bg="#D22B2B", image=globalImages[5]).pack(side=LEFT, padx=5)
 
+    # Name of hospital label
     create_label(title_bar, admin_data["Name"].title(), 90, 0, fg="white", bg="#D22B2B", font=('Josefin Sans', 17), pady=0)
+    # Profile Page Button
     create_button(title_bar, '', 830, 2, background='#D22B2B', activebackground='#D22B2B',
         image=globalImages[7], command= lambda: load_page(profileRoot, globalImages, data=admin_data))
+    # Home Page button
     create_button(title_bar, '', 880, 2, background='#D22B2B', activebackground='#D22B2B',
         image=globalImages[10], command=lambda: decorate(display_frame))
 

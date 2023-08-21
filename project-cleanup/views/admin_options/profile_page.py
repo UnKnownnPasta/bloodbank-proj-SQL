@@ -55,7 +55,7 @@ def sub_profile_view():
         pinVal = pinEntry.get()
 
         if pinVerify(pinVal) == True:
-            values = (pinVal, hosp_name)
+            values = (pinVal, admin["Name"])
             cursor.execute(query, values)
             connection.commit()
 

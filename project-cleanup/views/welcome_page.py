@@ -70,6 +70,8 @@ def validate_inputs(hospname: str, usrname: str, control):
         display_error(); return
     elif hospname.isdigit() or usrname.isdigit():
         display_error(); return
+    elif hospname == 'Hospital Name' or usrname == 'Your Name':
+        display_error(); return
 
     # Check that the hospital exists
     cursor.execute(f"SELECT COUNT(*) FROM hospital WHERE HospitalName='{hospname}'")

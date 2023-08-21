@@ -106,28 +106,37 @@ def option_1_request():
     selected_hospital = create_dropdown(hospitals, 120, 145)
 
     # User Input: 3
-    create_label(hospitalFrame, "Preferred Date of Appointment:", 20, 180, bg='#7B1818', font=('Josefin Sans', 17), fg='white')
-    pref_date_entry = create_entry(hospitalFrame, 20, 230, "")
+    create_label(hospitalFrame, "Date of Appointment: (DD/MM/YYYY)", 20, 180, bg='#7B1818', font=('Josefin Sans', 17), fg='white')
+    date_entry = create_entry(hospitalFrame, 20, 230, "")
 
     # Buttons
     create_button(hospitalFrame, "Request", 100, 310, command=lambda:validate_info())
     create_button(hospitalFrame, "Back", 260, 310, command=lambda: show_options())
 
     def validate_info():
+        date_text = date_entry.get().strip().replace(' ', '')
+
         if not blood_qty_entry.get().isdigit() or blood_qty_entry.get().isspace():
             messagebox.showerror('Error', "Didn't specify blood quantity.")
+
         elif selected_hospital.get() == '':
             messagebox.showerror('Error', 'Select a hospital for a appointment.')
-        elif not pref_date_entry.get().isspace() or pref_date_entry.get() == '':
-            if len(pref_date_entry.get()) != 10:
-                messagebox.showerror('Error', 'Invalid Date format.')
-            elif pref_date_entry.get()[4] != '-' or pref_date_entry.get()[7] != '-':
-                messagebox.showerror('Error', 'Invalid Date format.')
+
+        elif len(date_text) != 0 or date_text.replace('/', '').isdigit():
+            if date_text.count('/') != 2: messagebox.showerror('Error', 'Invalid Date format.'); return
+            try:
+                t = '{:2}/{:2}/{:4}'
+                dates = date_text.split('/')
+                date_format = t.format(dates[0], dates[1], dates[2])
+            except:
+                messagebox.showerror('Error', 'Invalid Date format.'); return
             else:
-                messagebox.showinfo('Success', f"Requested a appointment in {selected_hospital.get()}! It'll be around {pref_date_entry.get()}")
-                show_options()
+                if date_format.count(' ') == 0:
+                    messagebox.showinfo('Success', f"Requested a appointment in {selected_hospital.get()}! It'll be around {date_text}")
+                    show_options()
+                else: messagebox.showerror('Error', 'Invalid Date format.'); return
         else:
-            messagebox.showerror('Error', 'Invalid Date format.')
+            messagebox.showerror('Error', 'Invalid Date format.'); return
 
 
 def option_2_appoint():
@@ -149,29 +158,38 @@ def option_2_appoint():
     illness_entry = create_entry(hospitalFrame, 20, 150, "", width=67)
 
     # User Input: 3
-    create_label(hospitalFrame, "Preferred Date of Appointment:", 20, 210, bg='#7B1818', font=('Josefin Sans', 17), fg='white')
-    pref_date_entry = create_entry(hospitalFrame, 20, 260, "")
+    create_label(hospitalFrame, "Date of Appointment: (DD/MM/YYYY)", 20, 210, bg='#7B1818', font=('Josefin Sans', 17), fg='white')
+    date_entry = create_entry(hospitalFrame, 20, 260, "")
 
     # Buttons
     create_button(hospitalFrame, "Donate", 100, 350, command=lambda: validate_info())
     create_button(hospitalFrame, "Back", 260, 350, command=lambda: show_options())
 
     def validate_info():
+        date_text = date_entry.get().strip().replace(' ', '')
+
         if selected_hospital.get() == '':
             messagebox.showerror('Error', 'No Hospital Selected')
+        
         elif illness_entry.get().isdigit() or illness_entry.get().isspace() or illness_entry.get() == '':
             messagebox.showerror('Error', 'Please mention any past illness or medical condition(s)')
-        elif not pref_date_entry.get().isspace():
-            if len(pref_date_entry.get()) != 10:
-                messagebox.showerror('Error', 'Invalid Date format.')
-            elif pref_date_entry.get()[4] != '-' or pref_date_entry.get()[7] != '-':
-                messagebox.showerror('Error', 'Invalid Date format.')
+        
+        elif len(date_text) != 0 or date_text.replace('/', '').isdigit():
+            if date_text.count('/') != 2: messagebox.showerror('Error', 'Invalid Date format.'); return
+            try:
+                t = '{:2}/{:2}/{:4}'
+                dates = date_text.split('/')
+                date_format = t.format(dates[0], dates[1], dates[2])
+            except:
+                messagebox.showerror('Error', 'Invalid Date format.'); return
             else:
-                update_bloodbank(data[4])
-                messagebox.showinfo('Success', f"A appointment is set in {selected_hospital.get()} on {pref_date_entry.get()}")
-                show_options()
+                if date_format.count(' ') == 0:
+                    update_bloodbank(data[4])
+                    messagebox.showinfo('Success', f"Successfully set a appointment in {selected_hospital.get()}, on {date_text}!")
+                    show_options()
+                else: messagebox.showerror('Error', 'Invalid Date format.'); return
         else:
-            messagebox.showerror('Error', 'Invalid Date format.')
+            messagebox.showerror('Error', 'Invalid Date format.'); return
 
 
 

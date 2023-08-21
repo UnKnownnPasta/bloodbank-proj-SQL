@@ -64,4 +64,3 @@ def admin_login(root):
     user_pass = custom_entry(root, 240, 320, 'Password')
     # Login Button
     create_button(root, 'Login', 410, 380, command= lambda: validate_cred(root, user_name.get(), user_pass.get()))
-    validate_cred(root, 'Hospital A', 'password')

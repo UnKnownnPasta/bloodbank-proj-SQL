@@ -44,20 +44,20 @@ def donate_blood_citizen(src, tt):
     create_button(src, 'Appoint', 60, 340, command=lambda: validate())
 
     def validate():
-        def val(strings: list[str]):
-            allowed_characters = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 +-")
-            return all(char in allowed_characters for char in strings)
+        for i in [e_1.get(), e_2.get(), e_4.get()]:
+            if i.isdigit() or len(i) == 0 or i.isspace():
+                messagebox.showerror('Error', 'Failed to appoint user; Verify user details'); return
 
-        if False in {val(e_1.get()), val(e_2.get()), val(e_3.get()), val(e_4.get())}:
-            messagebox.showerror('Error', 'All fields are not properly filled out.')
-        else:
-            try: cursor.execute(f"insert into recipient values ({randint(1000, 9999)}, '{e_1.get()}', '{e_3.get()}', '{e_2.get()}', '{e_4.get()}', 0, 0)")
-            except: messagebox.showerror('Error', 'Failed to appoint user; Verify user details'); connection.rollback()
-            connection.commit()
-            destroy_frameitems(src); donation_choice(src=src, ID=id, x=tt)
+        if e_2.get().lower() not in ['male', 'female', 'm', 'f']: messagebox.showerror('Error', 'Enter a proper gender (M or F)'); return
+        elif not e_3.get().isdigit(): messagebox.showerror('Error', 'Enter a valid age'); return
+        elif int(e_3.get()) > 100: messagebox.showerror('Error', 'Enter a valid age'); return
+        elif e_4.get().lower()[0] not in ['a', 'b', 'o'] or e_4.get()[-1] not in ['-', '+']: messagebox.showerror('Error', 'Enter a valid Bloodtype'); return
 
-
-
+        cursor.execute(f"insert into recipient values ({randint(1000, 9999)}, '{e_1.get()}', '{e_3.get()}', '{e_2.get()}', '{e_4.get()}', 0, 0)")
+        connection.commit()
+        messagebox.showinfo('Success', f'Successfully set up donation request for {e_1.get()}! Required: {e_4.get().upper()}')
+        destroy_frameitems(src)
+        donation_choice(src=src, ID=id, x=tt)
 
 # -------------- Option: 2
 def donate_blood_hospital(src, tt):
@@ -130,11 +130,14 @@ def donate_blood_hospital(src, tt):
     def finish(ctrl):
         global selected, id
 
-        if hosp_sval.get() == '' or blood_sval.get() == '': messagebox.showerror('Error', 'Need to fill out all required fields')
+        if hosp_sval.get() == 'None' or len(selected) == 0:
+            messagebox.showerror('Error', 'Select all options')
+            return
 
         for i in selected:
             cursor.execute('select Units from bloodtable where concat(BloodType, RhFactor) = "%s"'%(i,))
 
+            # If Quantity of that blood type is 0, exit the loop
             if cursor.fetchone()[0] == 0:
                 break
 
@@ -146,9 +149,10 @@ def donate_blood_hospital(src, tt):
             cursor.execute('select HospitalName, HospitalID from hospital where HospitalID = %s'%(id))
             data = cursor.fetchone()
 
-            messagebox.showinfo('Success', f'Updated unit of bloods stored in your bank, {data[0]} to {hosp_sval.get()}')
+            messagebox.showinfo('Success', f'Successfully donated {len(selected)} units of blood to {hosp_sval.get()}!')
             destroy_frameitems(ctrl)
             donate_blood_hospital(ctrl, tt=tt)
+            return
 
         # If for loop failed to execute
         messagebox.showerror('Error', 'Not enough storage of blood available')
