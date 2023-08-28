@@ -1,12 +1,10 @@
-from tkinter import *
+from tkinter import Canvas, messagebox
 from __main__ import connection, cursor
-from tkinter import messagebox
 from utils import create_button, create_entry, create_images, wipe_page
 
 # --------------------------- Handle login function for admin page ----------------------------
 
 globalImages = create_images()
-
 
 #               ------------------- Preliminary Functions ----------------------              
 
@@ -24,7 +22,6 @@ def custom_entry(control, x, y, text):
     entry.bind('<FocusOut>', lambda event: restoreText(entry, text))
     return entry
 
-
 #               ------------------ Page Handling Functions ----------------------              
 
 def make_canvas(control):
@@ -34,21 +31,29 @@ def make_canvas(control):
     canvas.pack(side="top", fill="both", expand=True)
     return canvas
 
-def validate_cred(control, admin_user, admin_pass):
-    for i in [admin_user, admin_pass]:
-        if i == 'User Name' or i == 'Password' or len(i.strip()) == 0 or i.isdigit():
-            messagebox.showerror('Error', 'Invalid login details'); return
 
-    cursor.execute(f"select * from hospital where HospitalName='{admin_user}' and Password='{admin_pass}'")
+def validate_cred(control, admin_user, admin_pass):
+    admin_user, admin_pass = admin_user.strip(), admin_pass.strip()
+
+    if (admin_user == 'User Name' or admin_pass == 'Password' or
+            len(admin_user) == 0 or len(admin_pass) == 0 or
+            admin_user.isdigit() or admin_pass.isdigit()):
+        messagebox.showerror('Error', 'Invalid login details')
+        return
+
+    cursor.execute(f"SELECT * FROM hospital WHERE HospitalName='{admin_user}' AND Password='{admin_pass}'")
     info = cursor.fetchone()
-    if info == None:
-        messagebox.showerror('Error', 'Login details are not correct.'); return
+
+    if info is None:
+        messagebox.showerror('Error', 'Login details are not correct.')
+        return
 
     hospital_ID, pincode = info[0], info[4]
     wipe_page(control)
 
     from views.admin_page import admin_login
     admin_login(admin_user, admin_pass, hospital_ID, pincode, control)
+
 
 
 #               ----------------------- Login Page Code ----------------------              

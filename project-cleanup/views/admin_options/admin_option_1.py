@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 from __main__ import connection, cursor
-from utils import create_images, create_entry, create_button, create_label
+from utils import create_images, create_entry, create_button, create_label, wipe_page
 
 
 # ----------------------------------- Admin Menu Handling -------------------------------------
@@ -11,31 +11,25 @@ images = create_images()
 
 #               ------------------- Preliminary Functions ----------------------              
 
-def destroy_frameitems(frame):
-    for i in list(frame.__dict__['children'].values()):
-        if isinstance(i, Label):
-            if not i['text'].startswith('|'): i.destroy()
-        else: i.destroy()
-
-def donation_choice(src, ID, x):
+def donation_choice(src, ID, heading):
     global Admin_ID
     Admin_ID = ID
-    destroy_frameitems(src)
+    wipe_page(src)
 
     create_label(src, 'Arrange donation for a person:', 40, 90, font=('Cascadia Code', 19))
     create_label(src, 'Transfer blood to another hospital:', 40, 240, font=('Cascadia Code', 19))
 
-    create_button(src, 'Donate', 110, 150, command=lambda: (destroy_frameitems(src), donate_blood_citizen(src=src, tt=x)),
+    create_button(src, 'Donate', 110, 150, command=lambda: (wipe_page(src), donate_blood_citizen(src, heading)),
             bd=0, activebackground='#D22B2B', bg='#EE4B2B', relief="flat", padx=141, pady=8, fg='white', font=('Cascadia Code', 15))
-    create_button(src, 'Transfer', 110, 300, command=lambda: (destroy_frameitems(src), donate_blood_hospital(src=src, tt=x)),
+    create_button(src, 'Transfer', 110, 300, command=lambda: (wipe_page(src), donate_blood_hospital(src, heading)),
             bd=0, activebackground='#D22B2B', bg='#EE4B2B', relief="flat", padx=130, pady=8, fg='white', font=('Cascadia Code', 15))
 
 
 # -------------------------------- Option Selection Handling ----------------------------------
 #                --------------------- Option choice: 1 ----------------------              
 
-def donate_blood_citizen(src, tt):
-    tt['text'] = '|    Arranging Appointment'
+def donate_blood_citizen(src, header):
+    header['text'] = '|    Arranging Appointment'
 
     def make_lbl_entry(ctrl, text, x1, y1, x2, y2, w):
         nm = create_entry(src, x1, y1, '', width=w)
@@ -59,23 +53,27 @@ def donate_blood_citizen(src, tt):
         elif int(e_3.get()) > 100: messagebox.showerror('Error', 'Enter a valid age'); return
         elif e_4.get().lower()[:-1] not in ['a', 'b', 'o', 'ab'] or e_4.get()[-1] not in ['-', '+']: messagebox.showerror('Error', 'Enter a valid Bloodtype'); return
 
-        cursor.execute(f"insert into recipient values ({randint(1000, 9999)}, '{e_1.get()}', '{e_3.get()}', '{e_2.get()}', '{e_4.get()}', 0, 0)")
+        cursor.execute(f"SELECT COUNT(*) FROM recipient WHERE Name='{e_1.get()}'")
+        if cursor.fetchone()[0] == 0:
+            cursor.execute(f"insert into recipient values ({randint(1000, 9999)}, '{e_1.get()}', '{e_3.get()}', '{e_2.get()}', '{e_4.get()}', 0)")
+        else:
+            cursor.execute(f"update recipient set Donations=Donations + 1 where Name='{e_1.get()}'")
         connection.commit()
-        messagebox.showinfo('Success', f'Successfully set up donation request for {e_1.get()}! Required: {e_4.get().upper()}')
-        donation_choice(src=src, ID=Admin_ID, x=tt)
 
+        messagebox.showinfo('Success', f'Successfully set up donation request for {e_1.get()}! Required: {e_4.get().upper()}')
+        donation_choice(src, Admin_ID, header)
 
 
 #                --------------------- Option choice: 2 ----------------------              
 
-def donate_blood_hospital(src, tt):
+def donate_blood_hospital(src, header):
     global Admin_ID
-    tt['text'] = '|    Transferring Blood'
-    lx = create_label(src, 'Select the following;', 30, 100, font=('Josefin Sans', 18))
+    header['text'] = '|    Transferring Blood'
+    create_label(src, 'Select the following;', 30, 100, font=('Josefin Sans', 18))
 
 
     # ---- For Hospital Dropdown
-    lbl_1 = create_label(src, 'Choose a hospital:', 40, 170, font=('Josefin Sans', 18))
+    create_label(src, 'Choose a hospital:', 40, 170, font=('Josefin Sans', 18))
     hosp_options, hosp_sval = [], StringVar(value='None')
 
     cursor.execute(f'select HospitalName, HospitalID from Hospital where HospitalID != {Admin_ID}')
@@ -95,24 +93,21 @@ def donate_blood_hospital(src, tt):
     totalList = ""
     display_label = create_label(src, totalList, 550, 90, font=('Josefin Sans', 14), bg='#FBFCF8', padx=100, width=10, height=10, anchor='n')
 
-    def update_display_label():
-        display_label.config(text=totalList)
-
     def option_selected(blood):
         global totalList, selected
         totalList += f"Requested: {blood}\n"
         selected.append(blood)
-        update_display_label()
+        display_label.config(text=totalList)
 
     def reset_selected():
         global selected, totalList
         selected.clear()
         totalList = ""
-        update_display_label()
+        display_label.config(text=totalList)
 
 
     # ---- For Blood Type(s) Dropdown
-    lbl_2 = create_label(src, 'Select Blood Type(s):', 40, 230, font=('Josefin Sans', 18))
+    create_label(src, 'Select Blood Type(s):', 40, 230, font=('Josefin Sans', 18))
     blood_options = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']
     blood_sval = StringVar(value='        ')
     blood_menu = OptionMenu(src, blood_sval, *blood_options)
@@ -125,7 +120,7 @@ def donate_blood_hospital(src, tt):
 
 
     # ---- Buttons
-    proceed = create_button(src, 'Proceed with donation', 40, 353, command=lambda: finish(src),
+    proceed = create_button(src, 'Proceed with donation', 40, 353, command=lambda: proceed_dono(src),
         bd=0, activebackground='#D22B2B', bg='#EE4B2B', relief="flat", font=('Cascadia Code', 10))
 
     reset = create_button(src, 'Reset Selections', 340, 353, command=lambda: reset_selected(),
@@ -133,7 +128,7 @@ def donate_blood_hospital(src, tt):
 
 
     # ---- Function to validate the donation
-    def finish(ctrl):
+    def proceed_dono(ctrl):
         global selected, Admin_ID
 
         if hosp_sval.get() == 'None' or len(selected) == 0:
@@ -154,8 +149,8 @@ def donate_blood_hospital(src, tt):
             data = cursor.fetchone()
 
             messagebox.showinfo('Success', f'Successfully donated {len(selected)} units of blood to {hosp_sval.get()}!')
-            destroy_frameitems(ctrl)
-            donate_blood_hospital(ctrl, tt=tt)
+            wipe_page(ctrl)
+            donate_blood_hospital(ctrl, header)
             return
 
         # If for loop failed to execute

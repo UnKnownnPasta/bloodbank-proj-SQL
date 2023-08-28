@@ -7,55 +7,49 @@ from utils import pathLoad, pinVerify, wipe_page
 # Dictionary to hold admin information
 admin_data = {"Name": None, "ID":None, "Pass":None, "Pin":None}
 globalImages = create_images()
-from views.admin_options.profile_page import DEL_EVENT, load_page
+from views.admin_options.profile_page import load_page
 
 #               ------------------- Preliminary Functions ----------------------              
+
 def create_page(control):
-    global profileRoot, scroll_texts, scrollbar
+    global scroll_texts, scrollbar, scrolling_started
     control.configure(bg='white')
 
-    # Window for profile (Make and hide it)
-    profileRoot = Toplevel(control)
-    profileRoot.withdraw()
-    profileRoot.iconphoto(False, globalImages[6])
-    profileRoot.protocol('WM_DELETE_WINDOW', DEL_EVENT)
-
     # Make the info crawl (top black bar)
-    scroll_texts = ["", 0]
+    scroll_texts, scrolling_started = "", False
     scrollbar = create_label(control, "", 0, 0, font=("Arial", 12), anchor=NE, bg="black", fg="white", width=104)
 
+
 def crawl(txt):
-    global scroll_texts, scrollbar
+    global scroll_texts, scrolling_started, scrollbar
 
-    # Updated the crawl bar text
-    scroll_texts[0] += txt
+    # Append new text to the scrolling content
+    scroll_texts += txt
 
-    # If crawl bar is overflowing, remove first 7 information
-    if len(scroll_texts[0]) > 140:
-        scroll_texts[0] = '  '.join(scroll_texts[0].split('  ')[7:])
-    scrollbar.configure(text=scroll_texts[0])
+    # If scrolling content is too long, remove the oldest part
+    if len(scroll_texts) > 140:
+        scroll_texts = scroll_texts.split('  ', 7)[-1]
+
+    scrollbar.config(text=scroll_texts)
 
     def rotate():
-        text = scrollbar.cget("text")
+        global scroll_texts
 
-        # If the crawl text scrolled far enough for it to disappear, remove it
-        if len(text) >= 187+len(scroll_texts[0]):
-            scroll_texts[0] = ""
-        
-        # Update the crawl bar
-        scrollbar.config(text=text + "  ")
+        # Max number of characters in label is 187
+        if len(scroll_texts) >= 187 + len(scroll_texts):
+            scroll_texts = ""
+
+        scroll_texts += "   "
+        scrollbar.config(text=scroll_texts)
         scrollbar.after(100, rotate)
 
-    # If crawl bar hasn't been started yet
-    if not scroll_texts[1]:
-        scroll_texts[1] = 1
+    if not scrolling_started:
+        scrolling_started = True
         rotate()
 
+
 def decorate(source):
-    for i in list(source.__dict__['children'].values()):
-        if isinstance(i, Label):
-            if not i['text'].startswith('|'): i.destroy()
-        else: i.destroy()
+    wipe_page(source)
 
     bg = Label(source, image=globalImages[4])
     bg.place(x=-2, y=-2)
@@ -67,7 +61,6 @@ def decorate(source):
 #                --------------------- Primary Functions ----------------------              
 
 def load_admin_view(control):
-    global profileRoot
     title_bar = Frame(control, bg="#D22B2B", height=30)
     title_bar.pack(fill=X)
     title_bar.place(rely=0.045, relwidth=1)
@@ -81,18 +74,19 @@ def load_admin_view(control):
     logo_lbl = Label(title_bar, bg="#D22B2B", image=globalImages[5]).pack(side=LEFT, padx=5)
 
     # Name of hospital label
-    create_label(title_bar, admin_data["Name"].title(), 90, 0, fg="white", bg="#D22B2B", font=('Josefin Sans', 17), pady=0)
+    create_label(title_bar, admin_data["Name"].title(), 90, 0, fg="white", bg="#D22B2B",
+        font=('Josefin Sans', 17), pady=0)
     # Profile Page Button
     create_button(title_bar, '', 830, 2, background='#D22B2B', activebackground='#D22B2B',
-        image=globalImages[7], command= lambda: load_page(profileRoot, globalImages, data=admin_data))
+        image=globalImages[7], command= lambda: load_page(control, globalImages, admin_data))
     # Home Page button
     create_button(title_bar, '', 880, 2, background='#D22B2B', activebackground='#D22B2B',
         image=globalImages[10], command=lambda: decorate(display_frame))
 
-    # Set Defaults
+    # Greet user
     global sidebar_opened
+    sidebar_opened = False
     crawl(f'   Welcome {admin_data["Name"]}!   ')
-    sidebar_opened = False # Whether side-menu is open or not
 
     # Create window elements
     global current_view, display_frame
@@ -100,10 +94,9 @@ def load_admin_view(control):
     display_frame = Frame(control, width=control.winfo_screenwidth(), height=440)
     display_frame.place(x=0, y=69)
 
-    current_view = Label(display_frame, text='|    Hospital Management System', font=('Cascadia Code', 22), width=55, bg='#FBFCF8', height=1, anchor='w')
-    current_view.place(x=0, y=20)
-
+    # Place images then place header
     decorate(display_frame)
+    current_view = create_label(display_frame, '|    Hospital Management System', 0, 20, font=('Cascadia Code', 22), width=55, bg='#FBFCF8', height=1, anchor='w')
 
 
 def side_bar(root):

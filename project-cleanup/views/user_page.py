@@ -4,8 +4,7 @@ USER = ""
 
 # --------------------------------- User page handling -------------------------------------
 
-from tkinter import *
-from tkinter import font, ttk, messagebox
+from tkinter import font, messagebox, Frame, StringVar, OptionMenu
 from utils import create_button, create_entry, wipe_page, create_label
 from __main__ import cursor, connection
 from datetime import datetime
@@ -30,23 +29,29 @@ def display_info(frame, text1, text2, x1, y1, x2, y2, ):
     small_text = create_label(frame, text1, x1, y1, bg='#7B1818', font=('Bahnscrift', 12), fg='white')
 
     underlined_font = font.Font(family='Josefin Sans', size=25, underline=True)
-    create_label(frame, text2, x2, y2, font=underlined_font, fg='white', bg='#7B1818')
+    value_text = create_label(frame, text2, x2, y2, font=underlined_font, fg='white', bg='#7B1818')
     small_text.lift()
+    return value_text
 
-def create_dropdown(options: list, x, y):
+def create_dropdown(options, x, y, text):
     string_data = StringVar()
-    combobox = ttk.Combobox(hospitalFrame, textvariable=string_data, values=options, state="readonly")
+    string_data.set(value=text)
+    combobox = OptionMenu(hospitalFrame, string_data, *options)
     combobox.place(x=x, y=y)
+    
     return string_data
 
 def update_bloodbank(type, quantity):
+    global donation_count
     cursor.execute(f'update bloodtable set Units = Units+{int(quantity)} where concat(BloodType, RhFactor)="{type}"')
+    cursor.execute(f"update recipient set Donations = Donations + 1 where Name='{USER}'")
     connection.commit()
+    donation_count.config(text=str(int(donation_count['text']) + 1))
 
 
 #           ------------------- Left Side of Page: Displaying ----------------------              
 def left_display_info(control):
-    global data
+    global data, donation_count
     user_info_frame = Frame(control, bg='#7B1818', width=435, height=425)
     user_info_frame.place(x=10, y=65)
 
@@ -65,15 +70,16 @@ def left_display_info(control):
     display_info(user_info_frame, 'AGE', data[2], 23, 160, 23, 170)
     display_info(user_info_frame, 'SEX', data[3].title(), 150, 160, 150, 170)
     display_info(user_info_frame, 'BLOOD TYPE', data[4], 280, 160, 280, 170)
-
+    donation_count = display_info(user_info_frame, 'DONATIONS COUNT', data[5], 23, 240, 23, 250)
 
 #          ------------------- Right Side of Page: Displaying ----------------------              
+
 # Function to display options to user
 def show_options():
     global b1, b2, hospitalFrame
 
-    for i in list(hospitalFrame.__dict__['children'].values()):
-        if i['text'] != 'Request services': i.destroy()
+    for w in list(hospitalFrame.winfo_children()):
+        if w['text'] != 'Request services': w.destroy()
 
     b1 = create_button(hospitalFrame, 'Donate Blood (Transfusion)', 55, 100, padx=80, command= lambda: option_1_request())
     b2 = create_button(hospitalFrame, 'Request Blood', 55, 200, padx=124, command= lambda: option_2_appoint())
@@ -89,6 +95,7 @@ def right_display_options(control):
     show_options()
 
 #          ------------------- Right Side of Page: Functions ----------------------              
+
 def option_1_request():
     global b1, b2, hospitalFrame, data, root
     b1.destroy(); b2.destroy()
@@ -104,7 +111,7 @@ def option_1_request():
     hospitals = []
     for name in name_list:
         hospitals.append(name[0])
-    selected_hospital = create_dropdown(hospitals, 120, 145)
+    selected_hospital = create_dropdown(hospitals, 120, 145, 'Choose a Hospital')
 
     # User Input: 3
     create_label(hospitalFrame, "Date of Appointment: (DD/MM/YYYY)", 20, 180, bg='#7B1818', font=('Josefin Sans', 17), fg='white')
@@ -120,7 +127,7 @@ def option_1_request():
         if not blood_qty_entry.get().isdigit() or blood_qty_entry.get().isspace():
             messagebox.showerror('Error', "Didn't specify blood quantity.")
 
-        elif selected_hospital.get() == '':
+        elif selected_hospital.get() == 'Choose a Hospital':
             messagebox.showerror('Error', 'Select a hospital for a appointment.')
 
         elif len(date_text) != 0 or date_text.replace('/', '').isdigit():
@@ -130,7 +137,7 @@ def option_1_request():
                 messagebox.showinfo('Success', f"Requested a appointment in {selected_hospital.get()}! It'll be around {datee.date()}")
                 show_options()
             except ValueError:
-                messagebox.showerror('Error', 'Invalid Date format.'); return
+                messagebox.showerror('Error', 'Invalid Date.'); return
         else:
             messagebox.showerror('Error', 'Invalid Date format.'); return
 
@@ -139,7 +146,7 @@ def option_2_appoint():
     global b1, b2, hospitalFrame, data, root
     b1.destroy(); b2.destroy()
 
-    create_label(hospitalFrame, "Hospital:", 20, 65, bg='#7B1818', font=('Josefin Sans', 17), fg='white')
+    create_label(hospitalFrame, "Hospital:", 20, 63, bg='#7B1818', font=('Josefin Sans', 17), fg='white')
 
     # User Input: 1
     cursor.execute('SELECT HospitalName FROM hospital;')
@@ -147,11 +154,11 @@ def option_2_appoint():
     hospitals = []
     for name in name_list:
         hospitals.append(name[0])
-    selected_hospital = create_dropdown(hospitals, 120, 80)
+    selected_hospital = create_dropdown(hospitals, 120, 78, 'Choose a hospital')
 
     # User Input: 2
-    create_label(hospitalFrame, "Info on any current/past illness:", 20, 100, bg='#7B1818', font=('Josefin Sans', 17), fg='white')
-    illness_entry = create_entry(hospitalFrame, 20, 150, "", width=67)
+    create_label(hospitalFrame, "Info on any current/past illness:", 20, 108, bg='#7B1818', font=('Josefin Sans', 17), fg='white')
+    illness_entry = create_entry(hospitalFrame, 20, 158, "", width=67)
 
     # User Input: 3
     create_label(hospitalFrame, "Date of Appointment: (DD/MM/YYYY)", 20, 210, bg='#7B1818', font=('Josefin Sans', 17), fg='white')
@@ -164,7 +171,7 @@ def option_2_appoint():
     def validate_info():
         date_text = date_entry.get().strip().replace(' ', '')
 
-        if selected_hospital.get() == '':
+        if selected_hospital.get() == 'Choose a hospital':
             messagebox.showerror('Error', 'No Hospital Selected')
         
         elif illness_entry.get().isdigit() or illness_entry.get().isspace() or illness_entry.get() == '':

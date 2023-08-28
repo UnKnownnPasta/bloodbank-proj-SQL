@@ -1,6 +1,37 @@
 from utils import pathLoad, create_button, create_entry, create_images, wipe_page
 
+from tkinter import Canvas, Button, messagebox, Label, Toplevel, Entry
+from __main__ import x_coordinate, y_coordinate, cursor, connection
+from random import randint
+
 # --------------------- Define some basics for login and general program ----------------------
+
+def create_canvas(control, img):
+    canvas = Canvas(control, width=940, height=500, highlightthickness=0)
+    canvas.pack()
+    return canvas
+
+def display_entries(control, img):
+    global temp_button
+    temp_button.destroy()
+
+    # Login button
+    create_button(control, 'Login', 405, 360, command=lambda: validate_inputs(hospital.get(), user.get(), control))
+
+    # Entry to enter hospital name
+    hospital = create_entry(control, 240, 240, 'Hospital Name', width=70)
+    bind_focus_events(hospital, 'Hospital Name')
+
+    # Entry to enter Citizen's name
+    user = create_entry(control, 240, 300, 'Your Name', width=70)
+    bind_focus_events(user, 'Your Name')
+
+# --------------------------------- Welcome page handling -------------------------------------
+
+error_count = 0
+images = create_images()
+
+#               ------------------- Preliminary Functions ----------------------              
 
 def setText(entry, defaultText):
     if entry.get().strip() == defaultText:
@@ -9,22 +40,6 @@ def setText(entry, defaultText):
 def restoreText(entry, defaultText):
     if entry.get().strip() == "":
         entry.insert(0, defaultText)
-
-error_count = 0
-images = create_images()
-
-# --------------------------------- Welcome page handling -------------------------------------
-
-from tkinter import Canvas, Button, messagebox, Label, Toplevel, Entry
-from __main__ import x_coordinate, y_coordinate, cursor, connection
-from random import randint
-
-#               ------------------- Preliminary Functions ----------------------              
-
-def create_canvas(control, img):
-    canvas = Canvas(control, width=940, height=500, highlightthickness=0)
-    canvas.pack()
-    return canvas
 
 def bind_focus_events(widget, text):
     widget.bind('<FocusIn>', lambda event: setText(widget, text))
@@ -59,12 +74,12 @@ def admin_access(control):
     from views.access_admin_page import admin_login
     admin_login(control)
 
-
 #              ------------------- Sql Handling Functions ----------------------              
 
 def validate_inputs(hospname, usrname, control):
     hospname, usrname = hospname.strip(), usrname.strip()
 
+    # Basic validations
     if len(hospname) == 0 or len(usrname) == 0:
         display_error(); return
     elif hospname.isdigit() or usrname.isdigit():
@@ -81,7 +96,8 @@ def validate_inputs(hospname, usrname, control):
     cursor.execute(f"SELECT COUNT(*) FROM recipient WHERE Name='{usrname}'")
     if cursor.fetchone()[0] == 0:
         # If it does, register the citizen
-        register_user(control, usrname, hospname); return
+        register_user(control, usrname, hospname)
+        return
 
     from views.user_page import user_window
 
@@ -92,7 +108,7 @@ def validate_inputs(hospname, usrname, control):
 
 #             ------------------- Code for Registering User ----------------------              
 
-def register_user(source, user, hopsital):
+def register_user(source, user, hospital):
     sub_root_window = Toplevel(source)
     sub_root_window.title('Info Frame')
     sub_root_window.resizable(False, False)
@@ -100,47 +116,58 @@ def register_user(source, user, hopsital):
     sub_root_window.geometry(f'250x130+{x_coordinate + 200}+{y_coordinate + 100}')
 
     value_list = []
+    prompts = ["Enter your Age:", "Enter your Sex (m/f):", "Enter your Blood Type (A/B/O/AB +/-):"]
 
-    def create_entry_popup(text):
+    def create_entry_popup(prompt):
         wipe_page(sub_root_window)
 
-        Label(sub_root_window, text=text).pack()
+        Label(sub_root_window, text=prompt).pack()
         entry = create_entry(sub_root_window, 40, 20, '')
-        create_button(sub_root_window, "Next", 70, 70, command=lambda:verify_details(entry))
+        create_button(sub_root_window, "Next", 70, 70, command=lambda: verify_details(entry, prompt))
 
-    def verify_details(entry):
-        nonlocal value_list
+    def verify_details(entry, prompt):
+        nonlocal value_list, prompts
 
+        # Validation by each prompt
         if len(value_list) == 0:
             try:
                 if int(entry.get()) < 100:
-                    value_list.append(entry.get()); process_entry()
-                else: pass
-            except ValueError: pass
-        elif len(value_list) == 1 and (entry.get().lower() not in ['m', 'f', 'male', 'female']): pass
-        elif len(value_list) == 2 and ((entry.get()[:-1].upper() not in ['A', 'B', 'O', 'AB']) or (entry.get()[-1] not in ['-', '+'])): pass
+                    value_list.append(entry.get())
+                else: return
+            except ValueError: return
+        elif len(value_list) == 1:
+            if entry.get().lower() not in ['m', 'f', 'male', 'female']:
+                return
+            else:
+                value_list.append(entry.get())
+        elif len(value_list) == 2:
+            blood_type = entry.get().upper()
+            if blood_type[:-1] not in ['A', 'B', 'O', 'AB'] or blood_type[-1] not in ['-', '+']:
+                return
+            else: value_list.append(entry.get().upper())
+
+        if len(value_list) < 3:
+            prompts = prompts[1:]
+            create_entry_popup(prompts[0])
         else:
-            value_list.append(entry.get())
             process_entry()
 
     def process_entry():
-        if len(value_list) < 3:
-            create_entry_popup(["Enter your Sex:", "Enter your Blood Type:"][len(value_list)-1])
-        else:
-            # Store user details in the database
-            cursor.execute(
-                "INSERT INTO recipient VALUES (%s, %s, %s, %s, %s, 0, 0)",
-                (randint(1000, 9999), user, int(value_list[0]), value_list[1], value_list[2])
-            )
-            connection.commit()
+        # Store user details in the database
+        cursor.execute(
+            "INSERT INTO recipient VALUES (%s, %s, %s, %s, %s, 0)",
+            (randint(1000, 9999), user, int(value_list[0]), value_list[1], value_list[2])
+        )
+        connection.commit()
 
-            sub_root_window.destroy()
-            wipe_page(source)
-            from views.user_page import user_window
-            user_window(hopsital, user, source, images)
+        sub_root_window.destroy()
+        wipe_page(source)
+        from views.user_page import user_window
+        user_window(hospital, user, source, images)
 
     # Ask the first question
-    create_entry_popup("Enter your Age:")
+    create_entry_popup(prompts[0])
+
 
 
 

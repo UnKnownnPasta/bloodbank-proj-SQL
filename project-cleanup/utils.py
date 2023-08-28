@@ -7,11 +7,14 @@ def pathLoad(path):
 
 # -- Function to delete ALL Labels, images, entries, canvases
 def wipe_page(source):
-    # Get all widgets
-    widget_list = list(source.__dict__['children'].values())
-    for widget in widget_list:
-        widget.destroy()
+    from tkinter import Label
 
+    # Get all widgets
+    widget_list = list(source.winfo_children())
+    for widget in widget_list:
+        if isinstance(widget, Label) and widget['text'].startswith('|'):
+            pass
+        else: widget.destroy()
 
 # -- Function to verify given pin code
 def pinVerify(pin):
@@ -39,12 +42,19 @@ def create_entry(control, x_position, y_position, text, **kwargs):
 # --- Custom function to create buttons
 def create_button(control, text, x_position, y_position, **kwargs):
     from tkinter import Button
+    # kwargs is a dictionary containing all the option we used for Button()
 
     # Set default values for the appearance of the button
-    defaults = (['activebackground', '#FF5733'], ['background', '#EE4B2B'],
-    ['font', ('Century Gothic', 11)], ['bd', 0], ['padx', 35], ['pady', 10])
-    for setting in defaults:
-        kwargs.setdefault(setting[0], setting[1])
+    defaults = {
+        'activebackground': '#FF5733',
+        'background': '#EE4B2B',
+        'font': ('Century Gothic', 11),
+        'bd': 0,
+        'padx': 35,
+        'pady': 10
+    }
+    for option, value in defaults.items():
+        kwargs.setdefault(option, value)
 
     # Then create the button with all parameters
     button = Button(control, text=text, **kwargs)
@@ -66,19 +76,17 @@ def create_label(control, text, x_position, y_position, **kwargs):
 # --- Preload all images and icons
 def create_images():
     from tkinter import PhotoImage
-    images = {}
 
-    image_paths = [
-        'backgrounds/bg-blurred.png',   'backgrounds/bg-login.png',
-        'backgrounds/button-login.png', 'backgrounds/profile-page.png',
-        'backgrounds/admin_welcome.png',
+    image_paths_dict = {
+        0: 'backgrounds/bg-blurred.png',      1: 'backgrounds/bg-login.png',
+        2: 'backgrounds/button-login.png',    3: 'backgrounds/profile-page.png',
+        4: 'backgrounds/admin_welcome.png',
+        
+        5: 'icons/logo-80.png',  6: 'icons/icon.png',   7: 'icons/profile.png',
+        8: 'icons/lg.png',       9: 'icons/menu.png',   10: 'icons/home.png'
+    }
 
-        'icons/logo-80.png',            'icons/icon.png',
-        'icons/profile.png',            'icons/lg.png',
-        'icons/menu.png',               'icons/home.png',
-    ]
-
-    for index, path in enumerate(image_paths):
-        images[index] = PhotoImage(file=pathLoad('resources/' + path))
+    for index, path in image_paths_dict.items():
+        image_paths_dict[index] = PhotoImage(file=pathLoad('resources/' + path))
     
-    return images
+    return image_paths_dict
