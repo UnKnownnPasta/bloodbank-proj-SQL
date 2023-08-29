@@ -5,6 +5,7 @@ import mysql.connector as sql
 # Main Entry File
 #     Stores the tkinter instance (root)
 root = Tk()
+root.withdraw()
 
 #     and intialises its basic features
 root.title('Blood Bank System')
@@ -20,7 +21,7 @@ root.geometry(f"940x500+{x_coordinate}+{y_coordinate}")
 from sql_init import create_tables
 connection, cursor = create_tables()
 
-
+root.deiconify()
 #    finally, start the program
 if __name__ == "__main__":
     from views.welcome_page import welcome_screen
