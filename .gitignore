@@ -1,6 +1,2 @@
-versions
-
-__pycache__
-*.zip
-
-filedump
+# Random shit
+filedump/
