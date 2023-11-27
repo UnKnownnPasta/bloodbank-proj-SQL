@@ -1,8 +1,6 @@
-versions/_
-versions/v3-revised
+versions
 
 __pycache__
 *.zip
 
-v3-revised/_old
 filedump
