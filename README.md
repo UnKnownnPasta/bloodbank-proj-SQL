@@ -1,58 +1,55 @@
 # A tkinter project
-School project for a Blood Bank Management System, backed with functioning database system and features
+Tkinter project for a Blood Bank Management System, backed with functioning database system and features
 ###### NOTE:    THIS IS NOT A PUBLIC PACKAGE
 
 # Dependencies 
 - Tkinter @ Python `3.11`
 - MySQL w/Python, `v8.0.33`
+- pickle/datetime; packed along with python
 - OS dependant modules
 
 Built to work on windows, should work on linux.
 
 ## Running this
 Install Python **3.7 or newer**, along with MySQL and `mysql-connector-python`
-Update `MYSQL_PASSWORD` variable in `functions.py` (in `__main__` for v3) to your sql password
+MYSQL connectivity achieved in `database.py`
 
 Clone the project
 ```bash
 git clone https://github.com/UnKnownnPasta/bloodbank-proj-SQL.git
 ```
 
-# Functionality [^1]
-User friendly Login/Sign up page
-Admin/User independent pages
+# Functionality
+Access for Doctors to handle appointments; approving/disposing them
+Access for highler level hospital stagg ("Admin") for creating appointments, managing doctors and blood storage
+
 * Admin:
-    - View all active blood donations
-    - Retrieve blood types and their stored units
-    - Modify/Append to blood bank database
-    - Retrieve blood for transfusion
-* User:
-    - Register as donator or recipient
-    - Donate/Recieve blood
-    - Detailed view of profile
+    - Arrange appointments with doctors
+    - Access stored units of blood, add/remove units of blood
+    - View active appointments
+    - View registered doctors
+* Doctor:
+    - View all arranged appointments
+    - Deny/Approve appointments
+    - Update blood storage
 
 # 🖼 Gallery
-## First user welcome:
-![Welcome Screen](blob/s1.png)
-### User View:
-![User view](blob/s2.png)
-### User View: Donating blood
-![Donating](blob/s3.png)
-### User View: Requesting blood
-![Requesting](blob/s4.png)
-## Admin Login:
-![Admin login](blob/s5.png)
-## Admin View:
-![Admin page](blob/s6.png)
-### Admin View: Menu
-![Menu](blob/s7.png)
-### Admin View: 1: Donating blood (to hospitals)
-![Donation](blob/s8.png)
-### Admin View: 2: Checking blood reserves
-![Blood table](blob/s9.png)
-### Admin View: Profile
-![Profile](blob/s10.png)
 
-
-[^1]: This project is subject to have drastic changes in code and looks, it's never finalised. why is this a note? why not
-[^2]: Still in process of being made
+## App launched
+![](blob/1.png)
+## Admin login view
+![](blob/2.png)
+## Admin home page
+![](blob/3.png)
+## Arrange appointment
+![](blob/4.png)
+## View registered doctors
+![](blob/5.png)
+## View appointments
+![](blob/6.png)
+## View blood storage
+![](blob/7.png)
+## Doctor login view
+![](blob/8.png)
+## Doctor home page
+![](blob/9.png)
