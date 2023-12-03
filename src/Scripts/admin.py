@@ -131,7 +131,7 @@ def arrange_appointment(src):
         blood_group, status = e_5.get().strip().upper(), type_var.get().strip()
         valid_blood_groups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 
-        if not name or not name.isalpha(): messagebox.showerror('Error', 'Please enter a valid name.'); return
+        if not name or not name.replace(' ', '').isalpha(): messagebox.showerror('Error', 'Please enter a valid name.'); return
         if gender not in ['M', 'F']: messagebox.showerror('Error', 'Please enter a valid gender (M/F).'); return
         if not age.isdigit() or not 17 < int(age) < 66: messagebox.showerror('Error', 'Please enter a valid age.'); return
         if not doctor: messagebox.showerror('Error', 'Please select a doctor.'); return
